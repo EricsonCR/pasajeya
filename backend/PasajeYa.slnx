@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PasajeYa.Api/PasajeYa.Api.csproj" />
+    <Project Path="src/PasajeYa.Application/PasajeYa.Application.csproj" />
+    <Project Path="src/PasajeYa.Domain/PasajeYa.Domain.csproj" />
+    <Project Path="src/PasajeYa.Infrastructure/PasajeYa.Infrastructure.csproj" />
+  </Folder>
+</Solution>
