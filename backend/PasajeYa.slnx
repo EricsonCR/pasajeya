@@ -5,4 +5,8 @@
     <Project Path="src/PasajeYa.Domain/PasajeYa.Domain.csproj" />
     <Project Path="src/PasajeYa.Infrastructure/PasajeYa.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PasajeYa.Application.Tests/PasajeYa.Application.Tests.csproj" />
+    <Project Path="tests/PasajeYa.Domain.Tests/PasajeYa.Domain.Tests.csproj" />
+  </Folder>
 </Solution>
