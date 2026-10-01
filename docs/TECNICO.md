@@ -21,6 +21,7 @@ _Pendiente_
 - Una rama por HU: `feature/HU-XX-nombre`
 - Un commit por tarea
 - Un Pull Request por HU con `Closes #N`
+- Commits: Conventional Commits (feat, fix, test, docs, chore)
 
 **Código:** _Pendiente_
 

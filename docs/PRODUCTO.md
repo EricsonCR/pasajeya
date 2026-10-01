@@ -21,7 +21,7 @@ Detalle en GitHub Issues.
 
 | Épica | HU | Issue |
 |---|---|---|
-| _Pendiente_ | | |
+| E1 Búsqueda (#1) | HU-01 Buscar viajes por origen, destino y fecha | #2 |
 
 ## Pantallas
 _Pendiente_
