@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PasajeYa.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using PasajeYa.Infrastructure.Data;
 namespace PasajeYa.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(PasajeYaDbContext))]
-    partial class PasajeYaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002081049_DatosIniciales")]
+    partial class DatosIniciales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
