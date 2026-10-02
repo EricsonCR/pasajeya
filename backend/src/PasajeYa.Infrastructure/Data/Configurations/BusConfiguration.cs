@@ -17,6 +17,11 @@ public class BusConfiguration : IEntityTypeConfiguration<Bus>
             .HasIndex(b => b.Placa)
             .IsUnique();
 
+        builder
+            .Property(b => b.TipoServicio)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
         builder.HasData(
             new Bus { Id = 1, Placa = "BDS275", Capacidad = 32, TipoServicio = TipoServicio.Economico },
             new Bus { Id = 2, Placa = "KFC192", Capacidad = 48, TipoServicio = TipoServicio.Economico },

@@ -13,5 +13,10 @@ public class BoletoConfiguration : IEntityTypeConfiguration<Boleto>
             .WithMany()
             .HasForeignKey(b => b.ViajeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Property(b => b.Estado)
+            .HasConversion<string>()
+            .HasMaxLength(20);
     }
 }

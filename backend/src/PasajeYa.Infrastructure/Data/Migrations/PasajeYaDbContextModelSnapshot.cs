@@ -30,8 +30,10 @@ namespace PasajeYa.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("NumeroAsiento")
                         .HasColumnType("int");
@@ -62,8 +64,10 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("TipoServicio")
-                        .HasColumnType("int");
+                    b.Property<string>("TipoServicio")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -78,42 +82,42 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                             Id = 1,
                             Capacidad = 32,
                             Placa = "BDS275",
-                            TipoServicio = 1
+                            TipoServicio = "Economico"
                         },
                         new
                         {
                             Id = 2,
                             Capacidad = 48,
                             Placa = "KFC192",
-                            TipoServicio = 1
+                            TipoServicio = "Economico"
                         },
                         new
                         {
                             Id = 3,
                             Capacidad = 32,
                             Placa = "PIL483",
-                            TipoServicio = 2
+                            TipoServicio = "Ejecutivo"
                         },
                         new
                         {
                             Id = 4,
                             Capacidad = 28,
                             Placa = "JFK581",
-                            TipoServicio = 2
+                            TipoServicio = "Ejecutivo"
                         },
                         new
                         {
                             Id = 5,
                             Capacidad = 16,
                             Placa = "MGM397",
-                            TipoServicio = 3
+                            TipoServicio = "Vip"
                         },
                         new
                         {
                             Id = 6,
                             Capacidad = 14,
                             Placa = "FIT814",
-                            TipoServicio = 3
+                            TipoServicio = "Vip"
                         });
                 });
 
