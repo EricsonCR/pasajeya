@@ -1,4 +1,5 @@
 using PasajeYa.Infrastructure;
+using PasajeYa.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "PasajeYa API"));
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<PasajeYaDbContext>();
+        await DbSeeder.SeedAsync(context);
+    }
 }
 
 app.UseHttpsRedirection();
