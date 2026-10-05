@@ -10,7 +10,7 @@ public class BoletoConfiguration : IEntityTypeConfiguration<Boleto>
     {
         builder
             .HasOne(b => b.Viaje)
-            .WithMany()
+            .WithMany(v => v.Boletos)
             .HasForeignKey(b => b.ViajeId)
             .OnDelete(DeleteBehavior.Restrict);
 

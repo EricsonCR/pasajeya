@@ -5,3 +5,7 @@
 GET {{ PasajeYa.Api_HostAddress }}/api/ciudades
 Accept: application/json
 ###
+
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?Origen=1&Destino=2&Fecha=2026-10-05
+Accept: application/json
+###
