@@ -14,6 +14,11 @@ public class CiudadRepository : ICiudadRepository
         _context = context;
     }
 
+    public async Task<bool> ExisteAsync(int id)
+    {
+        return await _context.Ciudades.AnyAsync(c => c.Id == id);
+    }
+
     public async Task<IReadOnlyList<Ciudad>> GetAllAsync()
     {
         return await _context.Ciudades.AsNoTracking().OrderBy(c => c.Nombre).ToListAsync();
