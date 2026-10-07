@@ -38,7 +38,7 @@ public static class DbSeeder
             }
         }
 
-        var lleno = viajes.First(v => v.BusId == 6);
+        var lleno = viajes.Last(v => v.BusId == 6);
         var boletos = new List<Boleto>();
 
         for (int i = 0; i < 14; i++)
