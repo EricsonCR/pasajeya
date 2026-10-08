@@ -17,9 +17,17 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddExceptionHandler<ValidacionExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+var origenes = builder.Configuration.GetSection("Cors:OrigenesPermitidos").Get<string[]>() ?? [];
+builder.Services.AddCors(options =>
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins(origenes)
+            .AllowAnyHeader()
+            .AllowAnyMethod()));
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -32,6 +40,8 @@ if (app.Environment.IsDevelopment())
         await DbSeeder.SeedAsync(context);
     }
 }
+
+app.UseCors("Frontend");
 
 app.UseHttpsRedirection();
 
