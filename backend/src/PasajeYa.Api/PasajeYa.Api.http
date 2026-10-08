@@ -1,11 +1,48 @@
 @PasajeYa.Api_HostAddress = http://localhost:5178
 
-###
-
+### Criterio 1: Listar ciudades
 GET {{ PasajeYa.Api_HostAddress }}/api/ciudades
 Accept: application/json
 ###
 
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?Origen=1&Destino=2&Fecha=2026-10-05
+### Criterio 2: búsqueda con resultados, ordenados por salida
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 1 d}}
 Accept: application/json
 ###
+
+### Criterio 3: viaje agotado (asientosDisponibles = 0), depende del seed; ver DbSeeder
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=6&destino=3&fecha=2026-10-12
+Accept: application/json
+###
+
+### Criterio 4: Listar viajes de solo hoy
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 0 d}}
+Accept: application/json
+###
+
+### Criterio 5: Viaje sin resultado
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=7&fecha={{$localDatetime 'YYYY-MM-DD'}}
+Accept: application/json
+###
+
+### Criterio 6a: Buscar viajes de origen y destino iguales
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=1&fecha={{$localDatetime 'YYYY-MM-DD'}}
+Accept: application/json
+###
+
+### Criterio 6b: Buscar viajes con fecha pasada
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' -1 d}}
+Accept: application/json
+###
+
+### Criterio 6c: Buscar viajes con fecha mas de 30 dias
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 31 d}}
+Accept: application/json
+###
+
+
+### Criterio 6d: Buscar viajes con ciudad que no existe
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=99&fecha={{$localDatetime 'YYYY-MM-DD'}}
+Accept: application/json
+###
+
