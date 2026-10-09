@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Time.Testing;
 using NSubstitute;
 using PasajeYa.Application.Dtos;
 using PasajeYa.Application.Exceptions;
@@ -13,18 +14,20 @@ public class ViajeServiceTests
     private readonly IViajeRepository _viajeRepository = Substitute.For<IViajeRepository>();
     private readonly ICiudadRepository _ciudadRepository = Substitute.For<ICiudadRepository>();
     private readonly ViajeService _service;
+    private readonly FakeTimeProvider _reloj = new(new DateTimeOffset(2026, 10, 9, 15, 0, 0, TimeSpan.Zero)); // "hoy" = 9 oct, 15:00
+    private readonly DateOnly _hoy = new(2026, 10, 9);
 
     public ViajeServiceTests()
     {
         _ciudadRepository.ExisteAsync(Arg.Any<int>()).Returns(true); // por defecto, toda ciudad existe
-        _service = new ViajeService(_viajeRepository, _ciudadRepository);
+        _service = new ViajeService(_viajeRepository, _ciudadRepository, _reloj);
     }
 
     [Fact]
     public async Task BuscarAsync_OrigenIgualDestino_LanzaErrorEnDestino()
     {
         // Arrange
-        var request = new BuscarViajesRequest(1, 1, DateOnly.FromDateTime(DateTime.Today));
+        var request = new BuscarViajesRequest(1, 1, _hoy);
 
         // Act
         var ex = await Assert.ThrowsAsync<ValidacionException>(() => _service.BuscarAsync(request));
@@ -37,7 +40,7 @@ public class ViajeServiceTests
     public async Task BuscarAsync_FechaPasada_LanzaErrorEnFecha()
     {
         // Arrange
-        var request = new BuscarViajesRequest(1, 2, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
+        var request = new BuscarViajesRequest(1, 2, _hoy.AddDays(-1));
 
         // Act
         var ex = await Assert.ThrowsAsync<ValidacionException>(() => _service.BuscarAsync(request));
@@ -50,7 +53,7 @@ public class ViajeServiceTests
     public async Task BuscarAsync_FechaMas30Dias_LanzaErrorEnFecha()
     {
         // Arrange
-        var request = new BuscarViajesRequest(1, 2, DateOnly.FromDateTime(DateTime.Today.AddDays(31)));
+        var request = new BuscarViajesRequest(1, 2, _hoy.AddDays(31));
 
         // Act
         var ex = await Assert.ThrowsAsync<ValidacionException>(() => _service.BuscarAsync(request));
@@ -63,7 +66,7 @@ public class ViajeServiceTests
     public async Task BuscarAsync_OrigenNoExiste_LanzaErrorEnOrigen()
     {
         // Arrange
-        var request = new BuscarViajesRequest(99, 2, DateOnly.FromDateTime(DateTime.Today));
+        var request = new BuscarViajesRequest(99, 2, _hoy);
         _ciudadRepository.ExisteAsync(99).Returns(false);
 
         // Act
@@ -80,8 +83,8 @@ public class ViajeServiceTests
         var viaje = new Viaje
         {
             Id = 1,
-            Salida = DateTime.Today.AddDays(1).AddHours(6),
-            Llegada = DateTime.Today.AddDays(1).AddHours(14),
+            Salida = _hoy.AddDays(1).ToDateTime(new TimeOnly(6, 0)),
+            Llegada = _hoy.AddDays(1).ToDateTime(new TimeOnly(14, 0)),
             Precio = 69.90m,
             Bus = new Bus { Placa = "ABC123", Capacidad = 10, TipoServicio = TipoServicio.Vip },
             Boletos = [
@@ -94,7 +97,7 @@ public class ViajeServiceTests
             .BuscarAsync(1, 2, Arg.Any<DateTime>(), Arg.Any<DateTime>())
             .Returns([viaje]);
 
-        var request = new BuscarViajesRequest(1, 2, DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
+        var request = new BuscarViajesRequest(1, 2, _hoy.AddDays(1));
 
         // Act
         var resultado = await _service.BuscarAsync(request);
@@ -106,5 +109,37 @@ public class ViajeServiceTests
         Assert.Equal(TipoServicio.Vip, viajeDto.TipoServicio);
         Assert.Equal(8, viajeDto.AsientosDisponibles);
 
+    }
+
+    [Fact]
+    public async Task BuscarAsync_FechaHoy_BuscaDesdeLaHoraActual()
+    {
+        // Arrange
+        var request = new BuscarViajesRequest(1, 2, _hoy);
+
+        // Act
+        await _service.BuscarAsync(request);
+
+        // Assert
+        await _viajeRepository.Received(1).BuscarAsync(
+            1, 2,
+            new DateTime(2026, 10, 9, 15, 0, 0),  // desde = la hora del reloj falso
+            new DateTime(2026, 10, 10));          // hasta = fin del día
+    }
+
+    [Fact]
+    public async Task BuscarAsync_FechaFutura_BuscaDesdeInicioDelDia()
+    {
+        // Arrange
+        var request = new BuscarViajesRequest(1, 2, _hoy.AddDays(1));
+
+        // Act
+        await _service.BuscarAsync(request);
+
+        // Assert
+        await _viajeRepository.Received(1).BuscarAsync(
+            1, 2,
+            new DateTime(2026, 10, 10),  // desde = mañna
+            new DateTime(2026, 10, 11)); // hasta = fin del día
     }
 }

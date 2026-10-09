@@ -8,17 +8,20 @@ public class ViajeService : IViajeService
 {
     private readonly IViajeRepository _viajeRepository;
     private readonly ICiudadRepository _ciudadRepository;
+    private readonly TimeProvider _timeProvider;
 
-    public ViajeService(IViajeRepository viajeRepository, ICiudadRepository ciudadRepository)
+    public ViajeService(IViajeRepository viajeRepository, ICiudadRepository ciudadRepository, TimeProvider timeProvider)
     {
         _viajeRepository = viajeRepository;
         _ciudadRepository = ciudadRepository;
+        _timeProvider = timeProvider;
     }
 
     public async Task<IReadOnlyList<ViajeDto>> BuscarAsync(BuscarViajesRequest request)
     {
+        var ahora = _timeProvider.GetLocalNow().DateTime;
+        var hoy = DateOnly.FromDateTime(ahora);
         var errores = new Dictionary<string, string[]>();
-        var hoy = DateOnly.FromDateTime(DateTime.Today);
 
         if (request.Origen == request.Destino) { errores["destino"] = ["Origen y destino no pueden ser iguales"]; }
 
@@ -35,7 +38,7 @@ public class ViajeService : IViajeService
 
         var inicioDelDia = request.Fecha.ToDateTime(TimeOnly.MinValue);
 
-        var desde = request.Fecha == hoy ? DateTime.Now : inicioDelDia;
+        var desde = request.Fecha == hoy ? ahora : inicioDelDia;
         var hasta = inicioDelDia.AddDays(1);
 
         var viajes = await _viajeRepository.BuscarAsync(request.Origen, request.Destino, desde, hasta);

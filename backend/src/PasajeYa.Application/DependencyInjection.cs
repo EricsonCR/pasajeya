@@ -10,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ICiudadService, CiudadService>();
         services.AddScoped<IViajeService, ViajeService>();
+        services.AddSingleton(TimeProvider.System);
         return services;
     }
 }
