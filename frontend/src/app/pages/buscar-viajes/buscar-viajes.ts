@@ -30,7 +30,7 @@ export class BuscarViajes implements OnInit {
         this.ciudades.set(ciudades);
       },
       error: (err) => {
-        console.error(err);
+        this.errores.set(['No se pudieron cargar las ciudades. Intente más tarde.']);
       },
     });
   }
@@ -56,6 +56,8 @@ export class BuscarViajes implements OnInit {
         if (err.status === 400) {
           const mensajes = Object.values(err.error.errors).flat() as string[];
           this.errores.set(mensajes);
+        } else {
+          this.errores.set(['No se pudo conectar con el servidor. Intente más tarde.']);
         }
       },
     });
