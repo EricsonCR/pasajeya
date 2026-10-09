@@ -29,7 +29,30 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Boleto se amplía en HU-03 y HU-05.
 
 ## API
-_Pendiente_
+**Zona horaria:** hora local de Perú (`DateTime`), sin UTC.
+
+**GET /api/ciudades** → 200
+```json
+[ {
+    "id": 1,
+    "nombre": "Lima"
+} ]
+```
+
+**GET /api/viajes?origen={id}&destino={id}&fecha={yyyy-MM-dd}** → 200 / 400
+```json
+[ {
+    "id": 10,
+    "salida": "2026-10-05T06:00:00",
+    "llegada": "2026-10-05T14:00:00",
+    "tipoServicio": "Ejecutivo",
+    "precio": 69.90,
+    "asientosDisponibles": 12
+} ]
+```
+- Agotado = `asientosDisponibles: 0`
+- Sin resultados = `[]`
+- Errores 400 con `ProblemDetails` estándar (agrupados por campo)
 
 ## Convenciones
 **Git:**

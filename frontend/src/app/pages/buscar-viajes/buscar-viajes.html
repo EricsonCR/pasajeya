@@ -1,0 +1,80 @@
+<h1>Buscar viajes</h1>
+<form [formGroup]="form" (ngSubmit)="buscar()">
+  <!-- Campo ciudad Origen -->
+  <div class="campo">
+    <label for="origen">Origen</label>
+    <select formControlName="origen" id="origen">
+      <option [ngValue]="null" disabled>Seleccione Origen</option>
+      @for (c of ciudades(); track c.id) {
+        <option [ngValue]="c.id">{{ c.nombre }}</option>
+      }
+    </select>
+    @if (form.controls.origen.invalid && form.controls.origen.touched) {
+      <small class="error">Seleccione la ciudad de origen</small>
+    }
+  </div>
+
+  <!-- Campo ciudad Destino -->
+  <div class="campo">
+    <label for="destino">Destino</label>
+    <select formControlName="destino" id="destino">
+      <option [ngValue]="null" disabled>Seleccione Destino</option>
+      @for (c of ciudades(); track c.id) {
+        <option [ngValue]="c.id">{{ c.nombre }}</option>
+      }
+    </select>
+    @if (form.controls.destino.invalid && form.controls.destino.touched) {
+      <small class="error">Seleccione la ciudad de destino</small>
+    }
+  </div>
+
+  <!-- Campo fecha de viaje -->
+  <div class="campo">
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha" formControlName="fecha" />
+    @if (form.controls.fecha.invalid && form.controls.fecha.touched) {
+      <small class="error">Seleccione la fecha del viaje</small>
+    }
+  </div>
+
+  <button type="submit">Buscar</button>
+</form>
+
+@if (errores().length > 0) {
+  @for (e of errores(); track $index) {
+    <p>{{ e }}</p>
+  }
+}
+
+@if (buscado()) {
+  @if (viajes().length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Salida</th>
+          <th>Llegada</th>
+          <th>Tipo Servicio</th>
+          <th>Precio</th>
+          <th>Asientos disponibles</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (v of viajes(); track v.id) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ v.salida | date: 'dd/MM HH:mm' }}</td>
+            <td>{{ v.llegada | date: 'dd/MM HH:mm' }}</td>
+            <td>{{ v.tipoServicio }}</td>
+            <td>{{ v.precio | currency: 'PEN' : 'S/ ' }}</td>
+            <td [class.agotado]="v.asientosDisponibles === 0">
+              {{ v.asientosDisponibles === 0 ? 'Agotado' : v.asientosDisponibles }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p>No hay viajes para esta ruta y fecha</p>
+  }
+}
