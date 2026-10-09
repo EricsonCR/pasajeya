@@ -15,7 +15,7 @@ export class BuscarViajes implements OnInit {
   private viajeService = inject(ViajeService);
   protected ciudades = signal<Ciudad[]>([]);
   protected viajes = signal<Viaje[]>([]);
-  protected flagViajes = signal(false);
+  protected buscado = signal(false);
   protected errores = signal<string[]>([]);
 
   protected form = new FormGroup({
@@ -38,7 +38,7 @@ export class BuscarViajes implements OnInit {
   buscar() {
     this.errores.set([]);
     this.viajes.set([]);
-    this.flagViajes.set(false);
+    this.buscado.set(false);
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -50,7 +50,7 @@ export class BuscarViajes implements OnInit {
     this.viajeService.buscarViajes(origen!, destino!, fecha!).subscribe({
       next: (viajes) => {
         this.viajes.set(viajes);
-        this.flagViajes.set(true);
+        this.buscado.set(true);
       },
       error: (err) => {
         if (err.status === 400) {
