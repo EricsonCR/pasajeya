@@ -6,6 +6,9 @@
       <option [ngValue]="c.id">{{ c.nombre }}</option>
     }
   </select>
+  @if (form.controls.origen.invalid && form.controls.origen.touched) {
+    <small class="error">Seleccione la ciudad de origen</small>
+  }
 
   <label for="destino">Destino</label>
   <select formControlName="destino" id="destino">
@@ -14,9 +17,15 @@
       <option [ngValue]="c.id">{{ c.nombre }}</option>
     }
   </select>
+  @if (form.controls.destino.invalid && form.controls.destino.touched) {
+    <small class="error">Seleccione la ciudad de destino</small>
+  }
 
   <label for="fecha">Fecha</label>
   <input type="date" id="fecha" formControlName="fecha" />
+  @if (form.controls.fecha.invalid && form.controls.fecha.touched) {
+    <small class="error">Seleccione la fecha del viaje</small>
+  }
 
   <button type="submit">Buscar</button>
 </form>
