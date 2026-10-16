@@ -11,9 +11,14 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 
 ## Decisiones técnicas
 - .NET 10 (LTS), solución `.slnx`, API con controllers
-- SQL Server local (Docker más adelante)
+- SQL Server 2022 local (Docker más adelante); connection string en User Secrets (`ConnectionStrings:PasajeYa`)
 - Swagger UI para probar la API
 - Idioma: dominio en español (`Viaje`, `Ruta`), términos técnicos en inglés (`Controller`, `Dto`)
+- Patrón repositorio: interfaz en Application, implementación en Infrastructure
+- Errores: `ValidacionException` + `IExceptionHandler` global → 400 con `ProblemDetails`
+- `TimeProvider` inyectado para reglas que dependen de "hoy" o "ahora"
+- CORS en Api, orígenes en `appsettings` (`Cors:OrigenesPermitidos`)
+- Frontend: Angular 22 + SCSS, sin SSR, Reactive Forms y signals; carpetas `models/`, `services/`, `pages/`; siempre se importa el `environment` base
 
 ## Modelo de datos
 | Tabla | Campos |
@@ -24,8 +29,14 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 | Viaje | Id, RutaId, BusId, Salida, Llegada, Precio |
 | Boleto | Id, ViajeId, NumeroAsiento, Estado |
 
-- Ruta: origen distinto de destino, sin rutas duplicadas, `DeleteBehavior.Restrict` en ambas FK.
-- Asientos disponibles = Capacidad del bus − boletos activos del viaje.
+- Id `int` autoincremental; sin auditoría por ahora.
+- `DeleteBehavior.Restrict` en todas las FK.
+- Ruta: origen distinto de destino (CHECK) y sin rutas duplicadas (índice único).
+- `Ciudad.Nombre`: máx. 100, único. `Bus.Placa`: máx. 10, única.
+- Enums guardados como texto (máx. 20).
+- `Boleto.Estado`: Reservado, Pagado, Anulado. Activos = Reservado + Pagado.
+- Asientos disponibles = Capacidad del bus − boletos activos del viaje (regla en `Viaje.AsientosDisponibles()`).
+- Configuración por entidad con `IEntityTypeConfiguration` en `Infrastructure/Data/Configurations/`.
 - Boleto se amplía en HU-03 y HU-05.
 
 ## API
@@ -60,7 +71,7 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Ramas técnicas: `chore/nombre`
 - Un commit por tarea
 - Un Pull Request por HU con `Closes #N`, integrado con merge commit
-- Commits: Conventional Commits (feat, fix, test, docs, chore)
+- Commits: Conventional Commits (feat, fix, refactor, test, docs, chore). `style` es solo formato de código, no CSS.
 
 **Código:**
 | Qué | Convención | Ejemplo |
@@ -72,11 +83,22 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 | DTOs | Singular + Dto / Request | `ViajeDto`, `BuscarViajesRequest` |
 
 ## Pruebas
-- Unitarias siempre: Domain y Application (xUnit), un proyecto de pruebas por capa.
+- Unitarias siempre: Domain y Application (xUnit + NSubstitute), un proyecto de pruebas por capa.
+- Nombres `Metodo_Escenario_Resultado` y patrón AAA (Arrange, Act, Assert).
 - Integración solo cuando se evalúe necesario (ej. concurrencia en HU-03).
+- Pruebas manuales: archivo `.http` con un request por criterio de aceptación.
+- Frontend sin pruebas unitarias por ahora.
+
+## Definición de listo
+Una HU puede empezar (crear la rama) cuando tiene:
+- Criterios de aceptación claros
+- Contrato de API definido
+- Cambios al modelo de datos definidos
+- Decisiones técnicas resueltas
 
 ## Definición de terminado
 Una HU está terminada cuando:
 - Cumple sus criterios de aceptación
 - Tiene sus pruebas y pasan
 - Está integrada a `main`
+- Se hizo la Review y la Retro el mismo día del merge

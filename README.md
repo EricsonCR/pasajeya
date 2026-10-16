@@ -27,10 +27,37 @@ Proyecto de portafolio que demuestra los perfiles:
 | DevOps | Docker · GitHub Actions |
 
 ## Arquitectura
-_Pendiente_
+- **Backend:** Clean Architecture en 4 capas (Domain, Application, Infrastructure, Api).
+- **Frontend:** Angular con componentes standalone y signals.
+- **Monorepo:** `backend/`, `frontend/`, `docs/`.
+
+Detalle en [docs/TECNICO.md](docs/TECNICO.md).
 
 ## Cómo ejecutar
-_Pendiente_
+**Requisitos:** .NET 10 SDK, Node.js + Angular CLI, SQL Server y la herramienta `dotnet-ef`.
+
+**Backend**
+```bash
+cd backend
+dotnet user-secrets set "ConnectionStrings:PasajeYa" "<connection string>" --project src/PasajeYa.Api
+dotnet ef database update -p src/PasajeYa.Infrastructure -s src/PasajeYa.Api
+dotnet run --project src/PasajeYa.Api
+```
+La API queda en `http://localhost:5178` (Swagger en `/swagger`). En desarrollo crea viajes de prueba para los próximos 7 días.
+
+**Pruebas**
+```bash
+cd backend
+dotnet test
+```
+
+**Frontend**
+```bash
+cd frontend
+npm install
+ng serve -o
+```
+La app queda en `http://localhost:4200`.
 
 ## Capturas
 _Pendiente_
