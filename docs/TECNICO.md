@@ -65,6 +65,25 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Sin resultados = `[]`
 - Errores 400 con `ProblemDetails` estándar (agrupados por campo)
 
+**GET /api/viajes/{id}/asientos** → 200 / 404
+```json
+{
+  "viajeId": 10,
+  "origen": "Lima",
+  "destino": "Arequipa",
+  "salida": "2026-10-17T06:00:00",
+  "tipoServicio": "Ejecutivo",
+  "precio": 69.90,
+  "asientos": [
+    { "numero": 1, "ocupado": false },
+    { "numero": 2, "ocupado": true }
+  ]
+}
+```
+- **asientos:** incluye todos los de la capacidad del bus, por ejemplo: si el bus tiene capacidad=34, se incluye 34 items en el arreglo de asientos.
+- **ocupado:** el estado ocupado solo es true si el boleto tiene estado activo. activo: (Reservado o Pagado).
+- El 404 cuando el viaje no existe y responde con ProblemDetails.
+
 ## Convenciones
 **Git:**
 - Una rama por HU: `feature/HU-XX-nombre`
