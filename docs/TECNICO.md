@@ -15,7 +15,7 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Swagger UI para probar la API
 - Idioma: dominio en español (`Viaje`, `Ruta`), términos técnicos en inglés (`Controller`, `Dto`)
 - Patrón repositorio: interfaz en Application, implementación en Infrastructure
-- Errores: `ValidacionException` + `IExceptionHandler` global → 400 con `ProblemDetails`
+- Errores: `AppException` (abstracta, con `StatusCode`) → `ValidacionException` (400) y `NoEncontradoException` (404); `AppExceptionHandler` global responde con `ProblemDetails`
 - `TimeProvider` inyectado para reglas que dependen de "hoy" o "ahora"
 - CORS en Api, orígenes en `appsettings` (`Cors:OrigenesPermitidos`)
 - Frontend: Angular 22 + SCSS, sin SSR, Reactive Forms y signals; carpetas `models/`, `services/`, `pages/`; siempre se importa el `environment` base
