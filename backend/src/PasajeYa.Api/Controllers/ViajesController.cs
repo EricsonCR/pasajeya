@@ -21,4 +21,11 @@ public class ViajesController : ControllerBase
         var viajesDto = await _viajeService.BuscarAsync(request);
         return Ok(viajesDto);
     }
+
+    [HttpGet("{id:int}/asientos")]
+    public async Task<ActionResult<MapaAsientosDto>> ObtenerMapaAsientos([FromRoute] int id)
+    {
+        var mapaAsientos = await _viajeService.ObtenerMapaAsientosAsync(id);
+        return Ok(mapaAsientos);
+    }
 }
