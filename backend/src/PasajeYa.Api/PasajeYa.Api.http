@@ -40,9 +40,22 @@ GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDa
 Accept: application/json
 ###
 
-
 ### Criterio 6d: Buscar viajes con ciudad que no existe
 GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=99&fecha={{$localDatetime 'YYYY-MM-DD'}}
 Accept: application/json
 ###
 
+
+# ===== HU-02: Ver asientos de un viaje y elegir uno =====
+# Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
+@viajeId = 647
+
+### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
+Accept: application/json
+###
+
+### Criterio 6: viaje que no existe → 404 con ProblemDetails
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes/99999/asientos
+Accept: application/json
+###
