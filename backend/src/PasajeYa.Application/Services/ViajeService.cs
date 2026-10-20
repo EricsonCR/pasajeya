@@ -55,4 +55,35 @@ public class ViajeService : IViajeService
 
         return viajesDto;
     }
+
+    public async Task<MapaAsientosDto> ObtenerMapaAsientosAsync(int viajeId)
+    {
+        var viaje = await _viajeRepository.ObtenerPorIdAsync(viajeId);
+        if (viaje is null) throw new NoEncontradoException($"El viaje {viajeId} no existe");
+
+        var asientosDto = new List<AsientoDto>();
+        var capacidadBus = viaje.Bus!.Capacidad;
+
+        for (int numero = 1; numero <= capacidadBus; numero++)
+        {
+            asientosDto.Add(
+                new AsientoDto(
+                    numero,
+                    viaje.AsientoOcupado(numero)
+                )
+            );
+        }
+
+        var mapaAsientosDto = new MapaAsientosDto(
+            viaje.Id,
+            viaje.Ruta!.Origen!.Nombre,
+            viaje.Ruta!.Destino!.Nombre,
+            viaje.Salida,
+            viaje.Bus.TipoServicio,
+            viaje.Precio,
+            asientosDto
+        );
+
+        return mapaAsientosDto;
+    }
 }
