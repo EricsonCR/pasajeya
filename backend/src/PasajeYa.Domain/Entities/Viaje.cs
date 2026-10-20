@@ -21,4 +21,11 @@ public class Viaje
 
         return capacidad - boletosActivos;
     }
+
+    public bool AsientoOcupado(int numero)
+    {
+        return Boletos.Any(
+            b => b.NumeroAsiento == numero
+            && (b.Estado == EstadoBoleto.Reservado || b.Estado == EstadoBoleto.Pagado));
+    }
 }
