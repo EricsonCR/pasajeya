@@ -20,6 +20,7 @@ public class ViajeServiceTests
     public ViajeServiceTests()
     {
         _ciudadRepository.ExisteAsync(Arg.Any<int>()).Returns(true); // por defecto, toda ciudad existe
+        _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns((Viaje?)null);
         _service = new ViajeService(_viajeRepository, _ciudadRepository, _reloj);
     }
 
@@ -141,5 +142,58 @@ public class ViajeServiceTests
             1, 2,
             new DateTime(2026, 10, 10),  // desde = mañna
             new DateTime(2026, 10, 11)); // hasta = fin del día
+    }
+
+    [Fact]
+    public async Task ObtenerMapaAsientosAsync_ViajeNoExiste_LanzaNoEncontradoException()
+    {
+        // Arrange
+        int viajeId = 99;
+
+        // Act
+        var ex = await Assert.ThrowsAsync<NoEncontradoException>(() => _service.ObtenerMapaAsientosAsync(viajeId));
+
+        // Assert
+        Assert.Equal($"El viaje {viajeId} no existe", ex.Message);
+    }
+
+    [Fact]
+    public async Task ObtenerMapaAsientosAsync_ViajeExiste_DevuelveMapaConAsientos()
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Id = 1,
+            Ruta = new Ruta
+            {
+                Origen = new Ciudad { Nombre = "Lima" },
+                Destino = new Ciudad { Nombre = "Arequipa" }
+            },
+            Salida = new DateTime(2026, 10, 21, 15, 0, 0),
+            Bus = new Bus { Placa = "BDS275", Capacidad = 4, TipoServicio = TipoServicio.Ejecutivo },
+            Precio = 179.9m,
+            Boletos = [
+                new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Anulado },
+                new Boleto { NumeroAsiento = 2, Estado = EstadoBoleto.Pagado },
+                new Boleto { NumeroAsiento = 3, Estado = EstadoBoleto.Reservado },
+            ]
+        };
+
+        _viajeRepository.ObtenerPorIdAsync(1).Returns(viaje);
+
+        // Act
+        var resultado = await _service.ObtenerMapaAsientosAsync(1);
+
+        // Assert
+        Assert.Equal(1, resultado.ViajeId);
+        Assert.Equal("Lima", resultado.Origen);
+        Assert.Equal("Arequipa", resultado.Destino);
+        Assert.Equal(new DateTime(2026, 10, 21, 15, 0, 0), resultado.Salida);
+        Assert.Equal(TipoServicio.Ejecutivo, resultado.TipoServicio);
+        Assert.Equal(179.9m, resultado.Precio);
+        Assert.Equal(4, resultado.Asientos.Count);
+        Assert.Equal(1, resultado.Asientos[0].Numero);
+        Assert.Equal(2, resultado.Asientos.Count(a => a.Ocupado == true));
+        Assert.Equal(2, resultado.Asientos.Count(a => a.Ocupado == false));
     }
 }
