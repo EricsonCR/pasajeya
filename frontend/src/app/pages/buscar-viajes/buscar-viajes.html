@@ -57,6 +57,7 @@
           <th>Tipo Servicio</th>
           <th>Precio</th>
           <th>Asientos disponibles</th>
+          <th>Acción</th>
         </tr>
       </thead>
       <tbody>
@@ -69,6 +70,14 @@
             <td>{{ v.precio | currency: 'PEN' : 'S/ ' }}</td>
             <td [class.agotado]="v.asientosDisponibles === 0">
               {{ v.asientosDisponibles === 0 ? 'Agotado' : v.asientosDisponibles }}
+            </td>
+            <td>
+              <button
+                [routerLink]="['/viajes', v.id, 'asientos']"
+                [disabled]="v.asientosDisponibles === 0"
+              >
+                Elegir asiento
+              </button>
             </td>
           </tr>
         }
