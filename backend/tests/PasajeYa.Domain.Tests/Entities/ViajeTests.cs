@@ -79,4 +79,53 @@ public class ViajeTests
         // Assert
         Assert.Equal(0, resultado);
     }
+
+    [Fact]
+    public void AsientoOcupado_ConUnBoletoPagado_DevuelveTrue()
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Boletos = [
+                new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Pagado }
+            ]
+        };
+
+        // Act
+        var resultado = viaje.AsientoOcupado(1);
+
+        // Assert
+        Assert.True(resultado);
+    }
+
+    [Fact]
+    public void AsientoOcupado_ConUnBoletoAnulado_DevuelveFalse()
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Boletos = [
+                new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Anulado }
+            ]
+        };
+
+        // Act
+        var resultado = viaje.AsientoOcupado(1);
+
+        // Assert
+        Assert.False(resultado);
+    }
+
+    [Fact]
+    public void AsientoOcupado_SinBoletos_DevuelveFalse()
+    {
+        // Arrange
+        var viaje = new Viaje();
+
+        // Act
+        var resultado = viaje.AsientoOcupado(1);
+
+        // Assert
+        Assert.False(resultado);
+    }
 }

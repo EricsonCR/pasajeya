@@ -1,0 +1,30 @@
+@if (mapa(); as m) {
+  <h1>Elegir asiento</h1>
+
+  <!-- Resumen del viaje -->
+  <section class="resumen">
+    <p><strong>Ruta:</strong> {{ m.origen }} → {{ m.destino }}</p>
+    <p><strong>Salida:</strong> {{ m.salida | date: 'dd/MM HH:mm' }}</p>
+    <p><strong>Servicio:</strong> {{ m.tipoServicio }}</p>
+    <p><strong>Precio:</strong> {{ m.precio | currency: 'PEN' : 'S/ ' }}</p>
+    <p><strong>Asiento elegido:</strong> {{ asientoElegido() ?? 'Ninguno' }}</p>
+  </section>
+
+  <!-- Mapa de asientos -->
+  <div class="asientos">
+    @for (a of m.asientos; track a.numero) {
+      <button
+        type="button"
+        [disabled]="a.ocupado"
+        [class.seleccionado]="asientoElegido() === a.numero"
+        (click)="elegirAsiento(a)"
+      >
+        {{ a.numero }}
+      </button>
+    }
+  </div>
+} @else if (error()) {
+  <p>No se encontró el viaje.</p>
+} @else {
+  <p>Cargando asientos...</p>
+}

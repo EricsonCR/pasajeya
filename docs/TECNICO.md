@@ -15,7 +15,7 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Swagger UI para probar la API
 - Idioma: dominio en español (`Viaje`, `Ruta`), términos técnicos en inglés (`Controller`, `Dto`)
 - Patrón repositorio: interfaz en Application, implementación en Infrastructure
-- Errores: `ValidacionException` + `IExceptionHandler` global → 400 con `ProblemDetails`
+- Errores: `AppException` (abstracta, con `StatusCode`) → `ValidacionException` (400) y `NoEncontradoException` (404); `AppExceptionHandler` global responde con `ProblemDetails`
 - `TimeProvider` inyectado para reglas que dependen de "hoy" o "ahora"
 - CORS en Api, orígenes en `appsettings` (`Cors:OrigenesPermitidos`)
 - Frontend: Angular 22 + SCSS, sin SSR, Reactive Forms y signals; carpetas `models/`, `services/`, `pages/`; siempre se importa el `environment` base
@@ -64,6 +64,25 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Agotado = `asientosDisponibles: 0`
 - Sin resultados = `[]`
 - Errores 400 con `ProblemDetails` estándar (agrupados por campo)
+
+**GET /api/viajes/{id}/asientos** → 200 / 404
+```json
+{
+  "viajeId": 10,
+  "origen": "Lima",
+  "destino": "Arequipa",
+  "salida": "2026-10-17T06:00:00",
+  "tipoServicio": "Ejecutivo",
+  "precio": 69.90,
+  "asientos": [
+    { "numero": 1, "ocupado": false },
+    { "numero": 2, "ocupado": true }
+  ]
+}
+```
+- **asientos:** incluye todos los de la capacidad del bus, por ejemplo: si el bus tiene capacidad=34, se incluye 34 items en el arreglo de asientos.
+- **ocupado:** el estado ocupado solo es true si el boleto tiene estado activo. activo: (Reservado o Pagado).
+- El 404 cuando el viaje no existe y responde con ProblemDetails.
 
 ## Convenciones
 **Git:**

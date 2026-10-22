@@ -4,9 +4,10 @@ import { Ciudad } from '../../models/ciudad';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Viaje } from '../../models/viaje';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  imports: [ReactiveFormsModule, DatePipe, CurrencyPipe],
+  imports: [ReactiveFormsModule, DatePipe, CurrencyPipe, RouterLink],
   selector: 'app-buscar-viajes',
   styleUrl: './buscar-viajes.scss',
   templateUrl: './buscar-viajes.html',

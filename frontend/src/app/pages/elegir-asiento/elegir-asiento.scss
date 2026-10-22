@@ -1,0 +1,72 @@
+// 1. Resumen del viaje: una tarjeta blanca con borde
+.resumen {
+  background-color: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  max-width: 400px;
+
+  p {
+    margin: 0.25rem 0;
+  }
+}
+
+// 2. Grilla del mapa: 4 asientos por fila, como un bus (2 + pasillo + 2)
+.asientos {
+  display: grid;
+  grid-template-columns: 3rem 3rem 4rem 3rem; // la 3.ª columna es más ancha: ahí va el pasillo
+  gap: 0.5rem;
+
+  // carrocería del bus: borde grueso, frente más redondeado que la parte trasera
+  width: fit-content; // la caja mide lo que miden los asientos, no todo el ancho
+  padding: 1rem 1.25rem 1.5rem;
+  border: 3px solid var(--color-primario);
+  border-radius: 2.5rem 2.5rem 0.75rem 0.75rem; // arriba = frente, abajo = parte trasera
+  background-color: #fff;
+
+  // frente del bus: una fila extra arriba, creada solo con CSS (no cuenta como asiento)
+  &::before {
+    content: 'Frente · Conductor';
+    grid-column: 1 / -1; // ocupa toda la fila, de la 1.ª a la última columna
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-primario);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px dashed var(--color-borde); // separa la cabina de los asientos
+    margin-bottom: 0.25rem;
+  }
+
+  button {
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    // libre: blanco con borde azul (el global lo pinta azul, aquí lo sobrescribimos)
+    background-color: #fff;
+    color: var(--color-primario);
+    border: 2px solid var(--color-primario);
+
+    // pasillo: el asiento de la 3.ª columna se pega a la derecha y deja 1rem libre a su izquierda
+    &:nth-child(4n + 3) {
+      justify-self: end;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #e3e9f3; // marino muy claro
+    }
+
+    // ocupado: gris, no se puede marcar
+    &:disabled {
+      background-color: var(--color-deshabilitado);
+      border-color: var(--color-deshabilitado);
+      color: #fff;
+    }
+
+    // seleccionado: relleno azul
+    &.seleccionado,
+    &.seleccionado:hover {
+      background-color: var(--color-primario);
+      color: #fff;
+    }
+  }
+}

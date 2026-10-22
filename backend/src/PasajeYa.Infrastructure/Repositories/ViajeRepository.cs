@@ -30,4 +30,17 @@ public class ViajeRepository : IViajeRepository
             .ToListAsync();
         return viajes;
     }
+
+    public async Task<Viaje?> ObtenerPorIdAsync(int viajeId)
+    {
+        var viaje = await _context.Viajes
+            .AsNoTracking()
+            .Include(v => v.Bus)
+            .Include(v => v.Boletos)
+            .Include(v => v.Ruta).ThenInclude(r => r!.Origen)
+            .Include(v => v.Ruta).ThenInclude(r => r!.Destino)
+            .FirstOrDefaultAsync(v => v.Id == viajeId);
+        
+        return viaje;
+    }
 }

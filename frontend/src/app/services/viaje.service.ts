@@ -4,6 +4,7 @@ import { Ciudad } from '../models/ciudad';
 import { Observable } from 'rxjs';
 import { Viaje } from '../models/viaje';
 import { environment } from '../../environments/environment';
+import { MapaAsientos } from '../models/mapa-asientos';
 
 @Injectable({ providedIn: 'root' })
 export class ViajeService {
@@ -16,5 +17,9 @@ export class ViajeService {
 
   buscarViajes(origen: number, destino: number, fecha: string): Observable<Viaje[]> {
     return this.http.get<Viaje[]>(`${this.apiUrl}/viajes`, { params: { origen, destino, fecha } });
+  }
+
+  obtenerMapaAsientos(viajeId: number): Observable<MapaAsientos> {
+    return this.http.get<MapaAsientos>(`${this.apiUrl}/viajes/${viajeId}/asientos`);
   }
 }

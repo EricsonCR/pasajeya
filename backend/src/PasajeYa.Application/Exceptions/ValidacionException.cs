@@ -1,10 +1,12 @@
+using System.Net;
+
 namespace PasajeYa.Application.Exceptions;
 
-public sealed class ValidacionException : Exception
+public sealed class ValidacionException : AppException
 {
     public IDictionary<string, string[]> Errores { get; }
-    
-    public ValidacionException(string mensaje, IDictionary<string, string[]> errores) : base(mensaje)
+
+    public ValidacionException(string mensaje, IDictionary<string, string[]> errores) : base(mensaje, (int)HttpStatusCode.BadRequest)
     {
         Errores = errores;
     }
