@@ -15,7 +15,7 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 - Swagger UI para probar la API
 - Idioma: dominio en español (`Viaje`, `Ruta`), términos técnicos en inglés (`Controller`, `Dto`)
 - Patrón repositorio: interfaz en Application, implementación en Infrastructure
-- Errores: `AppException` (abstracta, con `StatusCode`) → `ValidacionException` (400) y `NoEncontradoException` (404); `AppExceptionHandler` global responde con `ProblemDetails`
+- Errores: `AppException` (abstracta, con `StatusCode`) → `ValidacionException` (400), `NoEncontradoException` (404) y `ConflictoException` (409); `AppExceptionHandler` global responde con `ProblemDetails`.
 - `TimeProvider` inyectado para reglas que dependen de "hoy" o "ahora"
 - CORS en Api, orígenes en `appsettings` (`Cors:OrigenesPermitidos`)
 - Frontend: Angular 22 + SCSS, sin SSR, Reactive Forms y signals; carpetas `models/`, `services/`, `pages/`; siempre se importa el `environment` base
@@ -27,17 +27,20 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 | Ruta | Id, OrigenId → Ciudad, DestinoId → Ciudad |
 | Bus | Id, Placa, TipoServicio, Capacidad |
 | Viaje | Id, RutaId, BusId, Salida, Llegada, Precio |
-| Boleto | Id, ViajeId, NumeroAsiento, Estado |
+| Boleto | Id, ViajeId, NumeroAsiento, Estado, Dni, Nombres, Apellidos, Correo, Celular, ReservadoHasta |
 
 - Id `int` autoincremental; sin auditoría por ahora.
 - `DeleteBehavior.Restrict` en todas las FK.
 - Ruta: origen distinto de destino (CHECK) y sin rutas duplicadas (índice único).
 - `Ciudad.Nombre`: máx. 100, único. `Bus.Placa`: máx. 10, única.
 - Enums guardados como texto (máx. 20).
-- `Boleto.Estado`: Reservado, Pagado, Anulado. Activos = Reservado + Pagado.
+- `Boleto.Estado`: Reservado, Pagado, Anulado.
 - Asientos disponibles = Capacidad del bus − boletos activos del viaje (regla en `Viaje.AsientosDisponibles()`).
 - Configuración por entidad con `IEntityTypeConfiguration` en `Infrastructure/Data/Configurations/`.
-- Boleto se amplía en HU-03 y HU-05.
+- Boleto: `Dni` char(8); `Nombres`/`Apellidos` máx. 100; `Correo` máx. 150; `Celular` máx. 9 y opcional; `ReservadoHasta` opcional.
+- Activos = Pagado + Reservado con ReservadoHasta > ahora. La reserva dura 15 min.
+- Índice único filtrado (ViajeId, NumeroAsiento) para Estado IN (`Reservado`,`Pagado`).
+- Boleto se amplía en HU-05.
 
 ## API
 **Zona horaria:** hora local de Perú (`DateTime`), sin UTC.
@@ -81,8 +84,35 @@ Monorepo: `backend/`, `frontend/`, `analytics/`, `docs/`.
 }
 ```
 - **asientos:** incluye todos los de la capacidad del bus, por ejemplo: si el bus tiene capacidad=34, se incluye 34 items en el arreglo de asientos.
-- **ocupado:** el estado ocupado solo es true si el boleto tiene estado activo. activo: (Reservado o Pagado).
+- **ocupado:** solo es true si el boleto está activo (ver Modelo de datos).
 - El 404 cuando el viaje no existe y responde con ProblemDetails.
+
+**POST /api/boletos** → 201 / 400 / 404 / 409
+```json
+// request
+{
+  "viajeId": 10,
+  "numeroAsiento": 5,
+  "dni": "12345678",
+  "nombres": "Ana",
+  "apellidos": "Pérez Soto",
+  "correo": "ana@mail.com",
+  "celular": "987654321"
+}
+
+// 201
+{
+  "id": 120,
+  "viajeId": 10,
+  "numeroAsiento": 5,
+  "estado": "Reservado",
+  "reservadoHasta": "2026-10-27T10:15:00"
+}
+```
+- 400: faltan datos obligatorios, el DNI no tiene 8 dígitos, el correo es inválido o el asiento está fuera de 1..capacidad.
+- 404: el viaje no existe.
+- 409: el asiento ya está ocupado (pagado, o reservado y vigente).
+- celular es opcional.
 
 ## Convenciones
 **Git:**
