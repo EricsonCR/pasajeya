@@ -15,4 +15,9 @@ public class Boleto
     public string? Celular { get; set; }
     public DateTime? ReservadoHasta { get; set; }
     public Viaje? Viaje { get; set; }
+
+    public bool EstadoActivo(DateTime ahora)
+    {
+        return (Estado == EstadoBoleto.Pagado) || (Estado == EstadoBoleto.Reservado && ReservadoHasta > ahora);
+    }
 }

@@ -90,7 +90,7 @@ public class ViajeServiceTests
             Bus = new Bus { Placa = "ABC123", Capacidad = 10, TipoServicio = TipoServicio.Vip },
             Boletos = [
                 new Boleto { Estado = EstadoBoleto.Pagado },
-                new Boleto { Estado = EstadoBoleto.Reservado },
+                new Boleto { Estado = EstadoBoleto.Reservado, ReservadoHasta = _reloj.GetLocalNow().DateTime.AddMinutes(10) },
                 new Boleto { Estado = EstadoBoleto.Anulado }
             ]
         };
@@ -175,7 +175,7 @@ public class ViajeServiceTests
             Boletos = [
                 new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Anulado },
                 new Boleto { NumeroAsiento = 2, Estado = EstadoBoleto.Pagado },
-                new Boleto { NumeroAsiento = 3, Estado = EstadoBoleto.Reservado },
+                new Boleto { NumeroAsiento = 3, Estado = EstadoBoleto.Reservado, ReservadoHasta = _reloj.GetLocalNow().DateTime.AddMinutes(10) },
             ]
         };
 

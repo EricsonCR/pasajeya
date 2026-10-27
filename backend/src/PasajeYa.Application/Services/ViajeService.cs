@@ -49,7 +49,7 @@ public class ViajeService : IViajeService
                 v.Llegada,
                 v.Bus!.TipoServicio,
                 v.Precio,
-                v.AsientosDisponibles()
+                v.AsientosDisponibles(ahora)
             ))
             .ToList();
 
@@ -58,6 +58,7 @@ public class ViajeService : IViajeService
 
     public async Task<MapaAsientosDto> ObtenerMapaAsientosAsync(int viajeId)
     {
+        var ahora = _timeProvider.GetLocalNow().DateTime;
         var viaje = await _viajeRepository.ObtenerPorIdAsync(viajeId);
         if (viaje is null) throw new NoEncontradoException($"El viaje {viajeId} no existe");
 
@@ -69,7 +70,7 @@ public class ViajeService : IViajeService
             asientosDto.Add(
                 new AsientoDto(
                     numero,
-                    viaje.AsientoOcupado(numero)
+                    viaje.AsientoOcupado(numero, ahora)
                 )
             );
         }

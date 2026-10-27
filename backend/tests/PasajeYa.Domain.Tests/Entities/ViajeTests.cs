@@ -5,6 +5,8 @@ namespace PasajeYa.Domain.Tests.Entities;
 
 public class ViajeTests
 {
+    private readonly DateTime _ahora = new(2026, 10, 9, 15, 0, 0);
+
     [Fact]
     public void AsientosDisponibles_SinBoletos_DevuelveCapacidad()
     {
@@ -12,7 +14,7 @@ public class ViajeTests
         var viaje = new Viaje { Bus = new Bus { Placa = "BDS275", Capacidad = 32 } };
 
         // Act
-        var resultado = viaje.AsientosDisponibles();
+        var resultado = viaje.AsientosDisponibles(_ahora);
 
         // Assert
         Assert.Equal(32, resultado);
@@ -26,7 +28,7 @@ public class ViajeTests
         viaje.Boletos.Add(new Boleto { Estado = EstadoBoleto.Pagado });
 
         // Act
-        var resultado = viaje.AsientosDisponibles();
+        var resultado = viaje.AsientosDisponibles(_ahora);
 
         // Assert
         Assert.Equal(31, resultado);
@@ -37,10 +39,10 @@ public class ViajeTests
     {
         // Arrange
         var viaje = new Viaje { Bus = new Bus { Placa = "BDS275", Capacidad = 32 } };
-        viaje.Boletos.Add(new Boleto { Estado = EstadoBoleto.Reservado });
+        viaje.Boletos.Add(new Boleto { Estado = EstadoBoleto.Reservado, ReservadoHasta = _ahora.AddMinutes(10) });
 
         // Act
-        var resultado = viaje.AsientosDisponibles();
+        var resultado = viaje.AsientosDisponibles(_ahora);
 
         // Assert
         Assert.Equal(31, resultado);
@@ -54,7 +56,7 @@ public class ViajeTests
         viaje.Boletos.Add(new Boleto { Estado = EstadoBoleto.Anulado });
 
         // Act
-        var resultado = viaje.AsientosDisponibles();
+        var resultado = viaje.AsientosDisponibles(_ahora);
 
         // Assert
         Assert.Equal(32, resultado);
@@ -74,7 +76,7 @@ public class ViajeTests
         };
 
         // Act
-        var resultado = viaje.AsientosDisponibles();
+        var resultado = viaje.AsientosDisponibles(_ahora);
 
         // Assert
         Assert.Equal(0, resultado);
@@ -92,7 +94,7 @@ public class ViajeTests
         };
 
         // Act
-        var resultado = viaje.AsientoOcupado(1);
+        var resultado = viaje.AsientoOcupado(1, _ahora);
 
         // Assert
         Assert.True(resultado);
@@ -110,7 +112,7 @@ public class ViajeTests
         };
 
         // Act
-        var resultado = viaje.AsientoOcupado(1);
+        var resultado = viaje.AsientoOcupado(1, _ahora);
 
         // Assert
         Assert.False(resultado);
@@ -123,9 +125,45 @@ public class ViajeTests
         var viaje = new Viaje();
 
         // Act
-        var resultado = viaje.AsientoOcupado(1);
+        var resultado = viaje.AsientoOcupado(1, _ahora);
 
         // Assert
         Assert.False(resultado);
+    }
+
+    [Fact]
+    public void AsientoOcupado_ConReservaVencida_DevuelveFalse()
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Boletos = [
+                new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Reservado, ReservadoHasta = _ahora.AddMinutes(-1) }
+            ]
+        };
+
+        // Act
+        var resultado = viaje.AsientoOcupado(1, _ahora);
+
+        // Assert   
+        Assert.False(resultado);
+    }
+
+    [Fact]
+    public void AsientoOcupado_ConReservaVigente_DevuelveTrue()
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Boletos = [
+                new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Reservado, ReservadoHasta = _ahora.AddMinutes(10) }
+            ]
+        };
+
+        // Act
+        var resultado = viaje.AsientoOcupado(1, _ahora);
+
+        // Assert   
+        Assert.True(resultado);
     }
 }
