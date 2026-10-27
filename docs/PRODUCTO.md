@@ -23,6 +23,7 @@ Detalle en GitHub Issues.
 |---|---|---|
 | E1 Búsqueda (#1) | HU-01 Buscar viajes por origen, destino y fecha | #2 |
 | E2 Compra (#6) | HU-02 Ver asientos de un viaje y elegir uno | #7 |
+| E2 Compra (#6) | HU-03 Reservar un asiento | #9 |
 
 ## Pantallas
 _Pendiente_
