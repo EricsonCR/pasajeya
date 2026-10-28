@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<ICiudadService, CiudadService>();
         services.AddScoped<IViajeService, ViajeService>();
         services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IBoletoService, BoletoService>();
         return services;
     }
 }
