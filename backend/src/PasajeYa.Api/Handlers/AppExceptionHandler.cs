@@ -19,7 +19,7 @@ public class AppExceptionHandler : IExceptionHandler
         problemDetails.Status = appException.StatusCode;
 
         httpContext.Response.StatusCode = appException.StatusCode;
-        await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problemDetails, problemDetails.GetType(), cancellationToken: cancellationToken);
 
         return true;
     }

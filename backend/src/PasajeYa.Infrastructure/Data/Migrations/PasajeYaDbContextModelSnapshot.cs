@@ -30,20 +30,50 @@ namespace PasajeYa.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Apellidos")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Celular")
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Dni")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("nchar(8)")
+                        .IsFixedLength();
+
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("NumeroAsiento")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReservadoHasta")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ViajeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ViajeId");
+                    b.HasIndex("ViajeId", "NumeroAsiento")
+                        .IsUnique()
+                        .HasFilter("[Estado] IN ('Reservado','Pagado')");
 
                     b.ToTable("Boletos");
                 });
@@ -339,7 +369,7 @@ namespace PasajeYa.Infrastructure.Data.Migrations
             modelBuilder.Entity("PasajeYa.Domain.Entities.Boleto", b =>
                 {
                     b.HasOne("PasajeYa.Domain.Entities.Viaje", "Viaje")
-                        .WithMany()
+                        .WithMany("Boletos")
                         .HasForeignKey("ViajeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -383,6 +413,11 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                     b.Navigation("Bus");
 
                     b.Navigation("Ruta");
+                });
+
+            modelBuilder.Entity("PasajeYa.Domain.Entities.Viaje", b =>
+                {
+                    b.Navigation("Boletos");
                 });
 #pragma warning restore 612, 618
         }

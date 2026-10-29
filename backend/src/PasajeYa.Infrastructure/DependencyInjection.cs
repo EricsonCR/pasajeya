@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddDbContext<PasajeYaDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("PasajeYa")));
         services.AddScoped<ICiudadRepository, CiudadRepository>();
         services.AddScoped<IViajeRepository, ViajeRepository>();
+        services.AddScoped<IBoletoRepository, BoletoRepository>();
         return services;
     }
 }

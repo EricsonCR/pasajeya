@@ -18,5 +18,31 @@ public class BoletoConfiguration : IEntityTypeConfiguration<Boleto>
             .Property(b => b.Estado)
             .HasConversion<string>()
             .HasMaxLength(20);
+
+        builder
+            .Property(b => b.Dni)
+            .IsFixedLength()
+            .HasMaxLength(8);
+
+        builder
+            .Property(b => b.Nombres)
+            .HasMaxLength(100);
+
+        builder
+            .Property(b => b.Apellidos)
+            .HasMaxLength(100);
+
+        builder
+            .Property(b => b.Correo)
+            .HasMaxLength(150);
+
+        builder
+            .Property(b => b.Celular)
+            .HasMaxLength(9);
+
+        builder
+            .HasIndex(b => new { b.ViajeId, b.NumeroAsiento })
+            .IsUnique()
+            .HasFilter("[Estado] IN ('Reservado','Pagado')");
     }
 }

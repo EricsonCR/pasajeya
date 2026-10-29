@@ -14,18 +14,19 @@ public class Viaje
     public Bus? Bus { get; set; }
     public ICollection<Boleto> Boletos { get; set; } = [];
 
-    public int AsientosDisponibles()
+    public int AsientosDisponibles(DateTime ahora)
     {
-        var boletosActivos = Boletos.Count(b => b.Estado == EstadoBoleto.Pagado || b.Estado == EstadoBoleto.Reservado);
+        var boletosActivos = Boletos
+            .Count(b => b.EstadoActivo(ahora));
         var capacidad = Bus!.Capacidad;
 
         return capacidad - boletosActivos;
     }
 
-    public bool AsientoOcupado(int numero)
+    public bool AsientoOcupado(int numero, DateTime ahora)
     {
         return Boletos.Any(
             b => b.NumeroAsiento == numero
-            && (b.Estado == EstadoBoleto.Reservado || b.Estado == EstadoBoleto.Pagado));
+            && b.EstadoActivo(ahora));
     }
 }
