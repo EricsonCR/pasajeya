@@ -23,6 +23,46 @@
       </button>
     }
   </div>
+
+  <form [formGroup]="form" (ngSubmit)="reservar()">
+    <div class="campo">
+      <label for="dni">DNI</label>
+      <input type="text" id="dni" formControlName="dni" />
+      @if (form.controls.dni.invalid && form.controls.dni.touched) {
+        <small class="error">Ingrese un dni con 8 dígitos</small>
+      }
+    </div>
+    <div class="campo">
+      <label for="nombres">Nombres</label>
+      <input type="text" id="nombres" formControlName="nombres" />
+      @if (form.controls.nombres.invalid && form.controls.nombres.touched) {
+        <small class="error">Ingrese un nombre correcto</small>
+      }
+    </div>
+    <div class="campo">
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" formControlName="apellidos" />
+      @if (form.controls.apellidos.invalid && form.controls.apellidos.touched) {
+        <small class="error">Ingrese un apellido correcto</small>
+      }
+    </div>
+    <div class="campo">
+      <label for="correo">Correo</label>
+      <input type="email" id="correo" formControlName="correo" />
+      @if (form.controls.correo.invalid && form.controls.correo.touched) {
+        <small class="error">Ingrese un correo correcto</small>
+      }
+    </div>
+    <div class="campo">
+      <label for="celular">Celular</label>
+      <input type="text" id="celular" formControlName="celular" />
+      @if (form.controls.celular.invalid && form.controls.celular.touched) {
+        <small class="error">Ingrese un celular con 9 dígitos</small>
+      }
+    </div>
+
+    <button type="submit" [disabled]="asientoElegido() === null">Reservar</button>
+  </form>
 } @else if (error()) {
   <p>No se encontró el viaje.</p>
 } @else {
