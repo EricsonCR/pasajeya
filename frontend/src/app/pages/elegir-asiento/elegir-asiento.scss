@@ -70,3 +70,81 @@
     }
   }
 }
+
+// todo el componente (título + grilla) centrado en la página
+:host {
+  display: block;
+  width: fit-content; // mide lo que mide su contenido...
+  margin: 0 auto; // ...y el margen sobrante se reparte a ambos lados
+}
+
+// 3. Pantalla en 2 columnas, como una tabla de Excel:
+//    A1 resumen  | B1 boleto (aviso / confirmación)
+//    A2 mapa     | B2 formulario
+.pantalla {
+  display: grid;
+  grid-template-columns: max-content 400px; // A: ancho de su contenido; B: fijo. Ninguna se estira
+  grid-template-areas:
+    'resumen boleto'
+    'mapa    formulario';
+  column-gap: 3rem;
+  row-gap: 1.5rem;
+  align-items: start; // cada celda arriba, sin estirarse a la altura de la otra
+
+  .resumen {
+    grid-area: resumen;
+    margin-bottom: 0; // el espacio ahora lo da row-gap
+  }
+  .boleto {
+    grid-area: boleto;
+  }
+  .asientos {
+    grid-area: mapa;
+  }
+  form {
+    grid-area: formulario;
+  }
+
+  // pantallas chicas (celular): una sola columna, en el orden de lectura
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'resumen'
+      'mapa'
+      'boleto'
+      'formulario';
+  }
+}
+
+// 4. Formulario de reserva: campos uno debajo del otro
+form {
+  display: flex;
+  flex-direction: column; // a diferencia de la búsqueda, aquí van en COLUMNA
+  gap: 0.75rem;
+
+  button {
+    align-self: flex-start; // el botón no se estira a todo el ancho
+  }
+}
+
+// 5. Mensaje del 409: más grande que el error de un campo, con fondo para que se note
+.aviso {
+  font-size: 1rem;
+  background-color: #fdecea; // rojo muy claro
+  border-left: 4px solid var(--color-error);
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+// 6. Confirmación: tarjeta como el resumen, con borde verde de "éxito"
+.confirmacion {
+  background-color: #fff;
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid #2e7d32; // verde
+  border-radius: var(--radio);
+  padding: 1rem;
+
+  p {
+    margin: 0.25rem 0;
+  }
+}
