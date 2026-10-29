@@ -1,68 +1,86 @@
 @if (mapa(); as m) {
   <h1>Elegir asiento</h1>
 
-  <!-- Resumen del viaje -->
-  <section class="resumen">
-    <p><strong>Ruta:</strong> {{ m.origen }} → {{ m.destino }}</p>
-    <p><strong>Salida:</strong> {{ m.salida | date: 'dd/MM HH:mm' }}</p>
-    <p><strong>Servicio:</strong> {{ m.tipoServicio }}</p>
-    <p><strong>Precio:</strong> {{ m.precio | currency: 'PEN' : 'S/ ' }}</p>
-    <p><strong>Asiento elegido:</strong> {{ asientoElegido() ?? 'Ninguno' }}</p>
-  </section>
+  <!-- Grilla 2x2: A1 resumen · B1 boleto · A2 mapa · B2 formulario -->
+  <div class="pantalla">
+    <!-- Resumen del viaje -->
+    <section class="resumen">
+      <p><strong>Ruta:</strong> {{ m.origen }} → {{ m.destino }}</p>
+      <p><strong>Salida:</strong> {{ m.salida | date: 'dd/MM HH:mm' }}</p>
+      <p><strong>Servicio:</strong> {{ m.tipoServicio }}</p>
+      <p><strong>Precio:</strong> {{ m.precio | currency: 'PEN' : 'S/ ' }}</p>
+      <p><strong>Asiento elegido:</strong> {{ asientoElegido() ?? 'Ninguno' }}</p>
+    </section>
 
-  <!-- Mapa de asientos -->
-  <div class="asientos">
-    @for (a of m.asientos; track a.numero) {
-      <button
-        type="button"
-        [disabled]="a.ocupado"
-        [class.seleccionado]="asientoElegido() === a.numero"
-        (click)="elegirAsiento(a)"
-      >
-        {{ a.numero }}
-      </button>
+    <!-- Mapa de asientos -->
+    <div class="asientos">
+      @for (a of m.asientos; track a.numero) {
+        <button
+          type="button"
+          [disabled]="a.ocupado"
+          [class.seleccionado]="asientoElegido() === a.numero"
+          (click)="elegirAsiento(a)"
+        >
+          {{ a.numero }}
+        </button>
+      }
+    </div>
+
+    <!-- Datos del boleto: aviso del 409 o confirmación -->
+    <section class="boleto">
+      @if (errores(); as msg) {
+        <p class="error aviso">{{ msg }}</p>
+      }
+      @if (boletoReservado(); as b) {
+        <div class="confirmacion">
+          <p>Número asiento: {{ b.numeroAsiento }}</p>
+          <p>Hora límite: {{ b.reservadoHasta | date: 'HH:mm' }}</p>
+        </div>
+      }
+    </section>
+
+    @if (!boletoReservado()) {
+      <form [formGroup]="form" (ngSubmit)="reservar()">
+        <div class="campo">
+          <label for="dni">DNI</label>
+          <input type="text" id="dni" formControlName="dni" />
+          @if (form.controls.dni.invalid && form.controls.dni.touched) {
+            <small class="error">Ingrese un dni con 8 dígitos</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="nombres">Nombres</label>
+          <input type="text" id="nombres" formControlName="nombres" />
+          @if (form.controls.nombres.invalid && form.controls.nombres.touched) {
+            <small class="error">Ingrese un nombre correcto</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="apellidos">Apellidos</label>
+          <input type="text" id="apellidos" formControlName="apellidos" />
+          @if (form.controls.apellidos.invalid && form.controls.apellidos.touched) {
+            <small class="error">Ingrese un apellido correcto</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="correo">Correo</label>
+          <input type="email" id="correo" formControlName="correo" />
+          @if (form.controls.correo.invalid && form.controls.correo.touched) {
+            <small class="error">Ingrese un correo correcto</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="celular">Celular</label>
+          <input type="text" id="celular" formControlName="celular" />
+          @if (form.controls.celular.invalid && form.controls.celular.touched) {
+            <small class="error">Ingrese un celular con 9 dígitos</small>
+          }
+        </div>
+
+        <button type="submit" [disabled]="asientoElegido() === null">Reservar</button>
+      </form>
     }
   </div>
-
-  <form [formGroup]="form" (ngSubmit)="reservar()">
-    <div class="campo">
-      <label for="dni">DNI</label>
-      <input type="text" id="dni" formControlName="dni" />
-      @if (form.controls.dni.invalid && form.controls.dni.touched) {
-        <small class="error">Ingrese un dni con 8 dígitos</small>
-      }
-    </div>
-    <div class="campo">
-      <label for="nombres">Nombres</label>
-      <input type="text" id="nombres" formControlName="nombres" />
-      @if (form.controls.nombres.invalid && form.controls.nombres.touched) {
-        <small class="error">Ingrese un nombre correcto</small>
-      }
-    </div>
-    <div class="campo">
-      <label for="apellidos">Apellidos</label>
-      <input type="text" id="apellidos" formControlName="apellidos" />
-      @if (form.controls.apellidos.invalid && form.controls.apellidos.touched) {
-        <small class="error">Ingrese un apellido correcto</small>
-      }
-    </div>
-    <div class="campo">
-      <label for="correo">Correo</label>
-      <input type="email" id="correo" formControlName="correo" />
-      @if (form.controls.correo.invalid && form.controls.correo.touched) {
-        <small class="error">Ingrese un correo correcto</small>
-      }
-    </div>
-    <div class="campo">
-      <label for="celular">Celular</label>
-      <input type="text" id="celular" formControlName="celular" />
-      @if (form.controls.celular.invalid && form.controls.celular.touched) {
-        <small class="error">Ingrese un celular con 9 dígitos</small>
-      }
-    </div>
-
-    <button type="submit" [disabled]="asientoElegido() === null">Reservar</button>
-  </form>
 } @else if (error()) {
   <p>No se encontró el viaje.</p>
 } @else {
