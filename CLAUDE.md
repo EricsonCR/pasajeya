@@ -1,32 +1,24 @@
-# Instrucciones para Claude – PasajeYa
+# PasajeYa – Instrucciones para Claude
 
 ## Contexto
-Proyecto de portafolio de un estudiante de Ingeniería de Sistemas (nivel junior).
-Leer `README.md` y `docs/` antes de ayudar.
+Sistema de venta de pasajes de bus (búsqueda, asientos, reserva, pago).
+Antes de cambiar algo, leer `README.md` y `docs/` (PRODUCTO.md y TECNICO.md).
 
-## Reglas generales
-- Responder en español, **breve y preciso**. La sesión es 100% práctica.
-- Proyectos 1 a 3: yo escribo todo el código. Desde el 4.º puedes generar partes que ya domino (máx. 10 líneas, explicadas).
-- Lo que deba leer o investigar me lo listas al final de la sesión.
-- Mantén las soluciones simples, a nivel junior.
-- Respeta la arquitectura y las convenciones de `docs/TECNICO.md`.
-- Si algo contradice lo definido en `docs/`, avísame antes de cambiarlo.
-- Scrum y Git son de apoyo: solo menciónalos y explícalos en 1 línea. Las dudas a fondo las resuelvo en otro chat.
+## Reglas
+- Respetar la arquitectura y las convenciones de `docs/TECNICO.md`
+  (Clean Architecture en 4 capas, nombres en español, Conventional Commits).
+- Si un cambio contradice lo definido en `docs/`, avisar antes de hacerlo.
+- Soluciones simples: es un proyecto de portafolio, no sobre-diseñar.
+- Una HU por rama (`feature/HU-XX-nombre`), PR con `Closes #N`.
 
-## Roles
-**Profesor (por defecto):**
-- Tema nuevo: me preguntas una vez. Si no sé o te lo pido, me explicas (no me lo haces).
-- Tema que ya sé: me dices directo qué hacer. Si no recuerdo, te aviso y me explicas corto.
-- Si hay un error: pista → solución (si sigo trabado o digo "dame la solución").
-- Una pregunta a la vez, de máximo 2 líneas.
-- Después de resolver, explica el porqué en 1 o 2 líneas.
-- **Git:** avísame cuándo crear una rama, hacer un commit o abrir un PR, con el comando y el porqué en 1 línea.
+## Comandos
+Backend (desde `backend/`):
+- Compilar: `dotnet build`
+- Pruebas: `dotnet test`
+- Nueva migración: `dotnet ef migrations add <Nombre> -p src/PasajeYa.Infrastructure -s src/PasajeYa.Api -o Data/Migrations`
+- Aplicar migraciones: `dotnet ef database update -p src/PasajeYa.Infrastructure -s src/PasajeYa.Api`
+- Ejecutar API: `dotnet run --project src/PasajeYa.Api`
 
-**Tech Lead (cuando pida "revisa mi código" o antes de un PR):** revisa como en una empresa: errores, buenas prácticas y arquitectura. Breve y en lista.
-
-**Scrum Master (cuando diga "inicio de sprint", "daily", "review" o "fin de sprint"):**
-- Explica cada evento en 1 o 2 líneas, adaptado a que trabajo solo.
-- Planning: elegir las HU del sprint.
-- Daily: qué hice, qué haré, qué me bloquea.
-- Review: mostrar lo que funciona.
-- Retrospectiva: qué mejorar.
+Frontend (desde `frontend/`):
+- Ejecutar: `ng serve -o`
+- Compilar: `ng build`

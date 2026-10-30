@@ -150,4 +150,4 @@ Una HU está terminada cuando:
 - Cumple sus criterios de aceptación
 - Tiene sus pruebas y pasan
 - Está integrada a `main`
-- Se hizo la Review y la Retro el mismo día del merge
+- Se hizo la Review y la Retro, a más tardar al inicio de la siguiente sesión después del merge
