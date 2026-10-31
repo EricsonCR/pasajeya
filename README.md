@@ -24,7 +24,7 @@ A futuro, el sistema sumará analítica de ventas y predicción de demanda.
 | Producto | Reserva de varios asientos | ⏳ Pendiente |
 | Producto | Pago en línea | ⏳ Pendiente |
 | Producto | Boleto en PDF y envío por correo | ⏳ Pendiente |
-| Producto | Panel de administración (todos los viajes) | ⏳ Pendiente |
+| Producto | Panel de administración | ⏳ Pendiente |
 | Calidad | Pruebas unitarias (Domain y Application) | ✅ Listo |
 | DevOps | Docker (API, frontend y BD) | ⏳ Pendiente |
 | DevOps | Integración continua (build y pruebas en cada PR) | ⏳ Pendiente |
@@ -35,15 +35,15 @@ A futuro, el sistema sumará analítica de ventas y predicción de demanda.
 1. En la pantalla de inicio, elige origen, destino y fecha, y busca.
 2. En la lista de viajes, presiona **Elegir asiento** en el que te interese.
 3. En el mapa, elige un asiento libre.
-4. Completa tus datos (DNI, nombres, apellidos, correo y, si quieres, celular) y presiona **Reservar**.
+4. Completa tus datos y presiona **Reservar**.
 5. Ves la confirmación con tu asiento y la hora límite para pagar (15 minutos).
 
-Si otro pasajero tomó el asiento segundos antes, verás el aviso "El asiento ya fue tomado"
-y el mapa se actualiza para que elijas otro.
-
 **Sin doble reserva:** si dos pasajeros reservan el mismo asiento a la vez, un índice
-único filtrado en SQL Server deja pasar solo a uno. Las reservas vencidas no bloquean
-el asiento: se calculan por hora, sin procesos en segundo plano.
+único filtrado en SQL Server deja pasar solo a uno; el otro ve un aviso y el mapa se
+actualiza para que elija otro asiento. Las reservas vencidas no bloquean el asiento:
+se calculan por hora, sin procesos en segundo plano.
+
+Reglas completas en [docs/PRODUCTO.md](docs/PRODUCTO.md).
 
 ## Arquitectura
 
@@ -84,10 +84,10 @@ pasajeya/
 │       ├── pages/                     buscar-viajes, elegir-asiento
 │       ├── services/                  viaje.service, boleto.service
 │       └── models/                    Interfaces de la API
-└── docs/                              PRODUCTO.md (historias) y TECNICO.md (decisiones)
+└── docs/                              PRODUCTO.md, TECNICO.md, API.md y DATOS.md
 ```
 
-Detalle de decisiones, modelo de datos y contratos de la API en [docs/TECNICO.md](docs/TECNICO.md).
+Más detalle en `docs/`: [decisiones técnicas](docs/TECNICO.md), [contratos de la API](docs/API.md) y [modelo de datos](docs/DATOS.md).
 
 ## Cómo ejecutarlo
 
