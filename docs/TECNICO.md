@@ -29,6 +29,7 @@ Capas del backend, organización del frontend y estructura del repositorio en el
 **Git:**
 - Una rama por HU: `feature/HU-XX-nombre`
 - Ramas técnicas: `chore/nombre`
+- Correcciones: `fix/nombre`
 - Un commit por tarea
 - Un Pull Request por HU con `Closes #N`, integrado con merge commit
 - Commits: Conventional Commits (feat, fix, refactor, test, docs, chore). `style` es solo formato de código, no CSS.
