@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using PasajeYa.Application.Dtos;
 using PasajeYa.Application.Exceptions;
@@ -30,7 +31,10 @@ public class BoletoService : IBoletoService
             throw new NoEncontradoException($"El viaje {request.ViajeId} no existe");
 
         if (request.NumeroAsiento < 1 || request.NumeroAsiento > viaje.Bus!.Capacidad)
-            errores["numeroAsiento"] = [$"El asiento {request.NumeroAsiento} está fuera de la capacidad del bus"];
+            errores["numeroAsiento"] = [$"El asiento {request.NumeroAsiento} está fuera de la capacidad del bus."];
+
+        if (viaje.Salida <= ahora)
+            errores["viajeId"] = ["El viaje ya salió, no se puede reservar."];
 
         if (errores.Count > 0)
             throw new ValidacionException("Error al validar datos de reserva", errores);

@@ -138,3 +138,21 @@ Content-Type: application/json
   "correo": "ericson@mail.com"
 }
 ###
+
+# ===== Fix #13: no reservar en viajes que ya salieron =====
+# Usa un viaje con salida pasada: SELECT TOP 1 Id FROM Viajes WHERE Salida <= GETDATE()
+@viajeSalidoId = 316
+
+### Viaje ya salido → 400 con error en viajeId
+POST {{ PasajeYa.Api_HostAddress }}/api/boletos
+Content-Type: application/json
+
+{
+  "viajeId": {{viajeSalidoId}},
+  "numeroAsiento": 1,
+  "dni": "46348500",
+  "nombres": "Ericson",
+  "apellidos": "Cruz",
+  "correo": "ericson@mail.com"
+}
+###
