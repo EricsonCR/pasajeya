@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PasajeYa.Domain.Entities;
+using PasajeYa.Domain.Enums;
 
 namespace PasajeYa.Infrastructure.Data;
 
@@ -51,12 +52,60 @@ public static class DbSeeder
 
     private static async Task CrearBoletosDePruebaAsync(PasajeYaDbContext context)
     {
+        var viajes = await context.Viajes
+            .Include(v => v.Bus)
+            .Where(v => v.Ruta!.Origen!.Nombre == "Lima"
+                && v.Ruta!.Destino!.Nombre == "Arequipa"
+                && v.Salida.Date == DateTime.Today)
+            .ToListAsync();
 
+        var lleno = viajes.Single(v => v.Salida.Hour == 14);
+        var mixto = viajes.Single(v => v.Salida.Hour == 22);
+        var boletos = new List<Boleto>();
+
+        for (int asiento = 1; asiento <= lleno.Bus!.Capacidad; asiento++)
+        {
+            boletos.Add(NuevoBoleto(lleno, asiento, EstadoBoleto.Pagado));
+        }
+
+        for (int asiento = 1; asiento <= 4; asiento++)
+        {
+            boletos.Add(NuevoBoleto(mixto, asiento, EstadoBoleto.Pagado));
+        }
+
+        for (int asiento = 5; asiento <= 6; asiento++)
+        {
+            var reservado = NuevoBoleto(mixto, asiento, EstadoBoleto.Reservado);
+            reservado.ReservadoHasta = DateTime.Today.AddDays(1);
+            boletos.Add(reservado);
+        }
+        
+        for (int asiento = 7; asiento <= 8; asiento++)
+        {
+            boletos.Add(NuevoBoleto(mixto, asiento, EstadoBoleto.Anulado));
+        }
+
+        context.Boletos.AddRange(boletos);
+        await context.SaveChangesAsync();
     }
 
     private static async Task SimularVentasAsync(PasajeYaDbContext context)
     {
 
+    }
+
+    private static Boleto NuevoBoleto(Viaje viaje, int asiento, EstadoBoleto estado)
+    {
+        return new Boleto
+        {
+            ViajeId = viaje.Id,
+            NumeroAsiento = asiento,
+            Estado = estado,
+            Dni = "12345678",
+            Nombres = "Pasajero",
+            Apellidos = "De Prueba",
+            Correo = "pasajero@prueba.com"
+        };
     }
 
 }
