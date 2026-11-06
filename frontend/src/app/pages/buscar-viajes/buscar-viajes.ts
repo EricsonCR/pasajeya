@@ -3,7 +3,7 @@ import { ViajeService } from '../../services/viaje.service';
 import { Ciudad } from '../../models/ciudad';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Viaje } from '../../models/viaje';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -22,13 +22,20 @@ export class BuscarViajes implements OnInit {
   protected form = new FormGroup({
     origen: new FormControl<number | null>(null, Validators.required),
     destino: new FormControl<number | null>(null, Validators.required),
-    fecha: new FormControl<string | null>('', Validators.required),
+    fecha: new FormControl<string | null>(
+      formatDate(new Date(), 'yyyy-MM-dd', 'en-US'),
+      Validators.required,
+    ),
   });
 
   ngOnInit(): void {
     this.viajeService.obtenerCiudades().subscribe({
       next: (ciudades) => {
         this.ciudades.set(ciudades);
+        this.form.patchValue({
+          origen: ciudades.find((x) => x.nombre === 'Lima')?.id,
+          destino: ciudades.find((x) => x.nombre === 'Arequipa')?.id,
+        });
       },
       error: (err) => {
         this.errores.set(['No se pudieron cargar las ciudades. Intente más tarde.']);
