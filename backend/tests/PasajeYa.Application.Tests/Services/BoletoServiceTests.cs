@@ -16,7 +16,7 @@ public class BoletoServiceTests
     private readonly IBoletoRepository _boletoRepository = Substitute.For<IBoletoRepository>();
     private readonly FakeTimeProvider _reloj = new(new DateTimeOffset(2026, 10, 28, 9, 15, 0, TimeSpan.Zero));
     private readonly ReservarBoletoRequest _requestValido = new(1, 1, "46348500", "Ericson", "Cruz", "ericson@gmail.com", "987654321");
-
+    private DateTime Ahora => _reloj.GetLocalNow().DateTime;
 
     public BoletoServiceTests()
     {
@@ -31,6 +31,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 }
         };
         _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns(viaje);
@@ -50,6 +51,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 }
         };
         _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns(viaje);
@@ -82,6 +84,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 }
         };
         _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns(viaje);
@@ -101,6 +104,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 },
             Boletos = [
                 new Boleto { NumeroAsiento = 1, Estado = EstadoBoleto.Reservado, ReservadoHasta = _reloj.GetLocalNow().DateTime.AddMinutes(15) }
@@ -122,6 +126,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 },
         };
         _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns(viaje);
@@ -144,6 +149,7 @@ public class BoletoServiceTests
         var viaje = new Viaje
         {
             Id = 1,
+            Salida = Ahora.AddDays(1),
             Bus = new Bus { Placa = "BDS275", Capacidad = 32 },
             Boletos = [boletoVencido]
         };
@@ -155,5 +161,27 @@ public class BoletoServiceTests
 
         // Assert
         await _boletoRepository.Received(1).ReservarAsync(Arg.Any<Boleto>(), boletoVencido);
+    }
+
+    [Theory]
+    [InlineData(-60)] // salió hace 1 hora
+    [InlineData(0)]   // sale justo ahora
+    public async Task ReservarAsync_ViajeYaSalio_LanzaErrorEnViajeId(int minutosDesdeAhora)
+    {
+        // Arrange
+        var viaje = new Viaje
+        {
+            Id = 1,
+            Salida = Ahora.AddMinutes(minutosDesdeAhora),
+            Bus = new Bus { Placa = "BDS275", Capacidad = 32 }
+        };
+        _viajeRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns(viaje);
+
+        // Act
+        var ex = await Assert.ThrowsAsync<ValidacionException>(() => _boletoService.ReservarAsync(_requestValido));
+
+        // Assert
+        Assert.Equal(["El viaje ya salió, no se puede reservar."], ex.Errores["viajeId"]);
+        await _boletoRepository.DidNotReceive().ReservarAsync(Arg.Any<Boleto>(), Arg.Any<Boleto?>());
     }
 }
