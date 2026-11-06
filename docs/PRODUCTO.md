@@ -34,6 +34,7 @@ y que la empresa de buses administre su operación desde un solo lugar.
 - La reserva bloquea el asiento por 15 minutos para pagar.
 - Si la reserva vence sin pago, el asiento vuelve a estar libre.
 - Un asiento no puede tener dos reservas vigentes: si otro pasajero lo tomó primero, se avisa y se debe elegir otro.
+- Solo se puede reservar en viajes que aún no salen (a la hora de salida ya no se puede).
 
 ## Historias de usuario
 Detalle en GitHub Issues.

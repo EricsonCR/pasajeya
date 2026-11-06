@@ -96,7 +96,7 @@ Fechas en hora local de Perú, sin zona horaria (`2026-10-05T06:00:00`).
 }
 ```
 
-**Response 400:** datos inválidos. También: celular sin 9 dígitos, correo con formato inválido o asiento fuera de rango (1 a la capacidad).
+**Response 400:** datos inválidos. También: celular sin 9 dígitos, correo con formato inválido, asiento fuera de rango (1 a la capacidad) o viaje que ya salió.
 ```json
 {
   "title": "One or more validation errors occurred.",
