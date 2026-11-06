@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using PasajeYa.Domain.Entities;
-using PasajeYa.Domain.Enums;
 
 namespace PasajeYa.Infrastructure.Data;
 
@@ -8,8 +7,16 @@ public static class DbSeeder
 {
     public static async Task SeedAsync(PasajeYaDbContext context)
     {
-        if (await context.Viajes.AnyAsync(v => v.Salida >= DateTime.Today)) return;
+        if (!await context.Viajes.AnyAsync(v => v.Salida >= DateTime.Today))
+        {
+            await CrearViajesAsync(context);
+            await CrearBoletosDePruebaAsync(context);
+        }
+        await SimularVentasAsync(context);
+    }
 
+    private static async Task CrearViajesAsync(PasajeYaDbContext context)
+    {
         var rutas = await context.Rutas.ToListAsync();
         var buses = await context.Buses.ToListAsync();
         var viajes = new List<Viaje>();
@@ -18,7 +25,7 @@ public static class DbSeeder
 
         foreach (var ruta in rutas)
         {
-            for (int dia = 0; dia < 7; dia++)
+            for (int dia = 0; dia < 2; dia++)
             {
                 foreach (var hora in horas)
                 {
@@ -38,23 +45,18 @@ public static class DbSeeder
             }
         }
 
-        var lleno = viajes.Last(v => v.BusId == 6);
-        var boletos = new List<Boleto>();
-
-        for (int i = 0; i < 14; i++)
-        {
-            boletos.Add(
-                new Boleto
-                {
-                    Viaje = lleno,
-                    NumeroAsiento = i + 1,
-                    Estado = EstadoBoleto.Pagado
-                }
-            );
-        }
-
         context.Viajes.AddRange(viajes);
-        context.Boletos.AddRange(boletos);
         await context.SaveChangesAsync();
     }
+
+    private static async Task CrearBoletosDePruebaAsync(PasajeYaDbContext context)
+    {
+
+    }
+
+    private static async Task SimularVentasAsync(PasajeYaDbContext context)
+    {
+
+    }
+
 }
