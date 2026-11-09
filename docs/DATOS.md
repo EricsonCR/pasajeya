@@ -78,6 +78,7 @@ Base de datos SQL Server, creada con migraciones de EF Core. Configuración de c
 | 06:00 | Vacío | Buscar, elegir asiento y reservar → 201 |
 | 14:00 | Lleno (`Pagado`) | Aparece agotado; reservar → 409 |
 | 22:00 | Mixto: 1–4 Pagado, 5–6 Reservado, 7–8 Anulado, resto libre | Reservar en 7 u 8 → 201; en 1 a 6 → 409 |
+
 Mañana, la misma ruta no tiene boletos.
 
 **Resto de rutas:** simulan ventas. En cada arranque, cada viaje con salida posterior a la hora actual (los de hoy que aún no salen y los de mañana) recibe 4 boletos `Pagado` en asientos libres, hasta llenarse. Los viajes que ya salieron no cambian.

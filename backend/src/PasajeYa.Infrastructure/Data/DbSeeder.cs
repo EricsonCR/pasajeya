@@ -79,7 +79,7 @@ public static class DbSeeder
             reservado.ReservadoHasta = DateTime.Today.AddDays(1);
             boletos.Add(reservado);
         }
-        
+
         for (int asiento = 7; asiento <= 8; asiento++)
         {
             boletos.Add(NuevoBoleto(mixto, asiento, EstadoBoleto.Anulado));
@@ -91,7 +91,32 @@ public static class DbSeeder
 
     private static async Task SimularVentasAsync(PasajeYaDbContext context)
     {
+        var viajes = await context.Viajes
+            .Include(v => v.Bus)
+            .Include(v => v.Boletos)
+            .Where(v => v.Salida > DateTime.Now
+                && !(v.Ruta!.Origen!.Nombre == "Lima" && v.Ruta!.Destino!.Nombre == "Arequipa"))
+            .ToListAsync();
 
+        var boletos = new List<Boleto>();
+
+        foreach (var viaje in viajes)
+        {
+            var libres = Enumerable.Range(1, viaje.Bus!.Capacidad)
+                .Except(viaje.Boletos!
+                    .Where(b => b.Estado == EstadoBoleto.Reservado || b.Estado == EstadoBoleto.Pagado)
+                    .Select(b => b.NumeroAsiento))
+                .Take(4)
+                .ToList();
+
+            foreach (var libre in libres)
+            {
+                boletos.Add(NuevoBoleto(viaje, libre, EstadoBoleto.Pagado));
+            }
+        }
+
+        context.Boletos.AddRange(boletos);
+        await context.SaveChangesAsync();
     }
 
     private static Boleto NuevoBoleto(Viaje viaje, int asiento, EstadoBoleto estado)
