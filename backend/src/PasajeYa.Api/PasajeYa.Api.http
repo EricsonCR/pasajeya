@@ -10,8 +10,8 @@ GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localD
 Accept: application/json
 ###
 
-### Criterio 3: viaje agotado (asientosDisponibles = 0), depende del seed; ver DbSeeder
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=6&destino=3&fecha=2026-10-12
+### Criterio 3: viaje agotado (asientosDisponibles = 0): Lima→Arequipa hoy 14:00; ver docs/DATOS.md
+GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD'}}
 Accept: application/json
 ###
 
