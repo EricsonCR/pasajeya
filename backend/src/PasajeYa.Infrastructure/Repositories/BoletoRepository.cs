@@ -16,6 +16,17 @@ public class BoletoRepository : IBoletoRepository
         _context = context;
     }
 
+    public async Task<Boleto?> ObtenerPorIdAsync(int boletoId)
+    {
+        var boleto = await _context.Boletos
+               .AsNoTracking()
+               .Include(b => b.Viaje).ThenInclude(v => v!.Ruta).ThenInclude(r => r!.Origen)
+               .Include(b => b.Viaje).ThenInclude(v => v!.Ruta).ThenInclude(r => r!.Destino)
+               .FirstOrDefaultAsync(x => x.Id == boletoId);
+
+        return boleto;
+    }
+
     public async Task ReservarAsync(Boleto boletoNuevo, Boleto? boletoVencido)
     {
         try
