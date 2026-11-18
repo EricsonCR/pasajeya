@@ -48,7 +48,7 @@ Accept: application/json
 
 # ===== HU-02: Ver asientos de un viaje y elegir uno =====
 # Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
-@viajeId = 964
+@viajeId = 3
 
 ### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
 GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
