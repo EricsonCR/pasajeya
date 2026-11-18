@@ -48,7 +48,7 @@ Accept: application/json
 
 # ===== HU-02: Ver asientos de un viaje y elegir uno =====
 # Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
-@viajeId = 3
+@viajeId = 4
 
 ### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
 GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
@@ -155,4 +155,18 @@ Content-Type: application/json
   "apellidos": "Cruz",
   "correo": "ericson@mail.com"
 }
+###
+
+# ===== HU-04: Pagar con tarjeta =====
+# Usa el "id" que devuelve el Criterio 1 de HU-03 (reserva válida).
+@boletoId = 788
+
+### Criterio 1: resumen de la reserva → 200 con viaje, asiento, precio y reservadoHasta
+GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}
+Accept: application/json
+###
+
+### Criterio 3: boleto que no existe → 404 con ProblemDetails
+GET {{ PasajeYa.Api_HostAddress }}/api/boletos/99999
+Accept: application/json
 ###
