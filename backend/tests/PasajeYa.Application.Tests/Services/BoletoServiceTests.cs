@@ -184,4 +184,58 @@ public class BoletoServiceTests
         Assert.Equal(["El viaje ya salió, no se puede reservar."], ex.Errores["viajeId"]);
         await _boletoRepository.DidNotReceive().ReservarAsync(Arg.Any<Boleto>(), Arg.Any<Boleto?>());
     }
+
+    [Fact]
+    public async Task ObtenerAsync_BoletoNoExiste_LanzaNoEncontrado()
+    {
+        // Arrange
+        _boletoRepository.ObtenerPorIdAsync(Arg.Any<int>()).Returns((Boleto?)null);
+
+        // Act
+        var ex = await Assert.ThrowsAsync<NoEncontradoException>(() => _boletoService.ObtenerAsync(99999));
+
+        // Assert
+        Assert.Equal("El boleto 99999 no existe", ex.Message);
+    }
+
+    [Fact]
+    public async Task ObtenerAsync_BoletoExiste_DevuelveDetalleConDatosDelViaje()
+    {
+        // Arrange
+        var boleto = new Boleto
+        {
+            Id = 120,
+            NumeroAsiento = 5,
+            Estado = EstadoBoleto.Reservado,
+            Dni = "46348500",
+            Nombres = "Ericson",
+            Apellidos = "Cruz",
+            ReservadoHasta = Ahora.AddMinutes(15),
+            Viaje = new Viaje
+            {
+                Salida = Ahora.AddDays(1),
+                Precio = 69.90m,
+                Ruta = new Ruta
+                {
+                    Origen = new Ciudad { Nombre = "Lima" },
+                    Destino = new Ciudad { Nombre = "Arequipa" }
+                }
+            }
+        };
+        _boletoRepository.ObtenerPorIdAsync(120).Returns(boleto);
+
+        // Act
+        var detalle = await _boletoService.ObtenerAsync(120);
+
+        // Assert
+        Assert.Equal(120, detalle.Id);
+        Assert.Equal(EstadoBoleto.Reservado, detalle.Estado);
+        Assert.Equal("Lima", detalle.Origen);
+        Assert.Equal("Arequipa", detalle.Destino);
+        Assert.Equal(Ahora.AddDays(1), detalle.Salida);
+        Assert.Equal(5, detalle.NumeroAsiento);
+        Assert.Equal(69.90m, detalle.Precio);
+        Assert.Equal("46348500", detalle.Dni);
+        Assert.Equal(Ahora.AddMinutes(15), detalle.ReservadoHasta);
+    }
 }
