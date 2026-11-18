@@ -21,6 +21,27 @@ public class BoletoService : IBoletoService
         _timeProvider = timeProvider;
     }
 
+    public async Task<DetalleBoletoDto> ObtenerAsync(int boletoId)
+    {
+        var boleto = await _boletoRepository.ObtenerPorIdAsync(boletoId);
+        if (boleto is null)
+            throw new NoEncontradoException($"El boleto {boletoId} no existe");
+
+        return new DetalleBoletoDto(
+            boleto.Id,
+            boleto.Estado,
+            boleto.Viaje!.Ruta!.Origen!.Nombre,
+            boleto.Viaje!.Ruta!.Destino!.Nombre,
+            boleto.Viaje!.Salida,
+            boleto.NumeroAsiento,
+            boleto.Viaje!.Precio,
+            boleto.Nombres,
+            boleto.Apellidos,
+            boleto.Dni,
+            boleto.ReservadoHasta
+        );
+    }
+
     public async Task<BoletoDto> ReservarAsync(ReservarBoletoRequest request)
     {
         var errores = Validar(request);
