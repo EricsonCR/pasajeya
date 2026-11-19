@@ -1,0 +1,19 @@
+// 1. Toda la pantalla centrada, como en elegir-asiento
+:host {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+// 2. Resumen de la reserva: la misma tarjeta blanca de elegir-asiento
+.resumen {
+  background-color: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  max-width: 400px;
+
+  p {
+    margin: 0.25rem 0;
+  }
+}

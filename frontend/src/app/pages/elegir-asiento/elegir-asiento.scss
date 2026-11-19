@@ -127,16 +127,7 @@ form {
   }
 }
 
-// 5. Mensaje del 409: más grande que el error de un campo, con fondo para que se note
-.aviso {
-  font-size: 1rem;
-  background-color: #fdecea; // rojo muy claro
-  border-left: 4px solid var(--color-error);
-  padding: 0.5rem 0.75rem;
-  margin: 0;
-}
-
-// 6. Confirmación: tarjeta como el resumen, con borde verde de "éxito"
+// 5. Confirmación: tarjeta como el resumen, con borde verde de "éxito"
 .confirmacion {
   background-color: #fff;
   border: 1px solid var(--color-borde);
@@ -146,5 +137,9 @@ form {
 
   p {
     margin: 0.25rem 0;
+  }
+
+  .boton {
+    margin-top: 0.75rem; // separa el enlace "Ir a pagar" de los datos
   }
 }
