@@ -1,1 +1,18 @@
-<p>pagar-reserva works!</p>
+@if (error(); as msg) {
+  <p class="error aviso">{{ msg }}</p>
+}
+
+@if (detalle(); as d) {
+  <h2>Datos de la Reserva</h2>
+  <div class="pantalla">
+    <section class="resumen">
+      <p><strong>Ruta:</strong> {{ d.origen }} -> {{ d.destino }}</p>
+      <p><strong>Salida:</strong> {{ d.salida | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Asiento:</strong> {{ d.numeroAsiento }}</p>
+      <p><strong>Pasajero:</strong> {{ d.nombres }} {{ d.apellidos }}</p>
+      <p><strong>DNI:</strong> {{ d.dni }}</p>
+      <p><strong>Precio:</strong> {{ d.precio | currency: 'PEN' : 'S/ ' }}</p>
+      <p><strong>Paga antes de:</strong> {{ d.reservadoHasta | date: 'dd/MM/yyyy HH:mm' }}</p>
+    </section>
+  </div>
+}

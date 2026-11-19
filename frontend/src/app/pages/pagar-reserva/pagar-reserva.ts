@@ -2,9 +2,10 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BoletoService } from '../../services/boleto.service';
 import { DetalleBoleto } from '../../models/detalle-boleto';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
-  imports: [],
+  imports: [DatePipe, CurrencyPipe],
   selector: 'app-pagar-reserva',
   styleUrl: './pagar-reserva.scss',
   templateUrl: './pagar-reserva.html',
