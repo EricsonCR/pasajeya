@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ViajeService } from '../../services/viaje.service';
 import { MapaAsientos } from '../../models/mapa-asientos';
 import { Asiento } from '../../models/asiento';
@@ -10,7 +10,7 @@ import { ReservarBoletoRequest } from '../../models/reservar-boleto-request';
 import { Boleto } from '../../models/boleto';
 
 @Component({
-  imports: [DatePipe, CurrencyPipe, ReactiveFormsModule, DatePipe],
+  imports: [DatePipe, CurrencyPipe, ReactiveFormsModule, DatePipe, RouterLink],
   selector: 'app-elegir-asiento',
   styleUrl: './elegir-asiento.scss',
   templateUrl: './elegir-asiento.html',
