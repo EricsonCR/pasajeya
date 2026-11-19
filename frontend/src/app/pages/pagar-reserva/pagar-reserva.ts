@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { BoletoService } from '../../services/boleto.service';
+import { DetalleBoleto } from '../../models/detalle-boleto';
 
 @Component({
   imports: [],
@@ -6,4 +9,21 @@ import { Component } from '@angular/core';
   styleUrl: './pagar-reserva.scss',
   templateUrl: './pagar-reserva.html',
 })
-export class PagarReserva {}
+export class PagarReserva implements OnInit {
+  private route = inject(ActivatedRoute);
+  private boletoService = inject(BoletoService);
+  protected detalle = signal<DetalleBoleto | null>(null);
+  protected error = signal<string | null>(null);
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.boletoService.obtener(Number(id)).subscribe({
+      next: (data) => {
+        this.detalle.set(data);
+      },
+      error: () => {
+        this.error.set('La reserva no existe');
+      },
+    });
+  }
+}
