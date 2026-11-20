@@ -148,12 +148,11 @@ Fechas en hora local de Perú, sin zona horaria (`2026-10-05T06:00:00`).
 
 **URL:** `POST /api/boletos/{id}/pago`
 
-**Request:** `token`, `medioPago`, `emisorId` y `cuotas` los entrega el formulario de tarjeta de Mercado Pago. El monto no viaja: sale del precio del viaje. `claveIdempotencia` se genera en el front cada vez que se abre el formulario; si se repite, no se cobra dos veces.
+**Request:** `token`, `medioPago` y `cuotas` los entrega el formulario de tarjeta de Mercado Pago. El monto no viaja: sale del precio del viaje. `claveIdempotencia` se genera en el front cada vez que se abre el formulario; si se repite, no se cobra dos veces.
 ```json
 {
   "token": "ff8080814c11e237014c1ff593b57b4d",
   "medioPago": "master",
-  "emisorId": "3",
   "cuotas": 1,
   "correoPagador": "ana@mail.com",
   "claveIdempotencia": "7f3c2a9e-1b4d-4e8a-9c21-5d6f7a8b9c0d"
