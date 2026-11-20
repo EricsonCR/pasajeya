@@ -15,6 +15,7 @@ public class Boleto
     public string? Celular { get; set; }
     public DateTime? ReservadoHasta { get; set; }
     public Viaje? Viaje { get; set; }
+    public ICollection<Pago> Pagos { get; set; } = [];
 
     public bool EstadoActivo(DateTime ahora)
     {
