@@ -27,6 +27,14 @@ public class BoletoRepository : IBoletoRepository
         return boleto;
     }
 
+    public async Task RegistrarPagoAsync(Boleto boleto, Pago pago)
+    {
+        _context.Boletos.Attach(boleto);
+        boleto.Estado = EstadoBoleto.Pagado;
+        _context.Pagos.Add(pago);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task ReservarAsync(Boleto boletoNuevo, Boleto? boletoVencido)
     {
         try
