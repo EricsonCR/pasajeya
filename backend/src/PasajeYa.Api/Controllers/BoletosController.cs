@@ -28,4 +28,11 @@ public class BoletosController : ControllerBase
         var detalleBoleto = await _boletoService.ObtenerAsync(id);
         return Ok(detalleBoleto);
     }
+
+    [HttpPost("{id:int}/pago")]
+    public async Task<ActionResult<PagoDto>> Pagar(int id, [FromBody] PagarBoletoRequest request)
+    {
+        var pago = await _boletoService.PagarAsync(id, request);
+        return Ok(pago);
+    }
 }
