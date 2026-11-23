@@ -6,4 +6,5 @@ public interface IBoletoService
 {
     Task<BoletoDto> ReservarAsync(ReservarBoletoRequest request);
     Task<DetalleBoletoDto> ObtenerAsync(int boletoId);
+    Task<PagoDto> PagarAsync(int boletoId, PagarBoletoRequest request);
 }
