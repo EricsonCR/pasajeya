@@ -58,6 +58,7 @@ public class BoletoService : IBoletoService
         var monto = boleto.Viaje!.Precio;
         var solicitudCobro = new SolicitudCobro
         (
+            boletoId,
             request.Token,
             request.MedioPago,
             request.Cuotas,

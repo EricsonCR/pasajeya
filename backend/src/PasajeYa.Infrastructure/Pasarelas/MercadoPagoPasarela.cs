@@ -26,6 +26,7 @@ public class MercadoPagoPasarela : IPasarelaPago
         {
             Type = "online",
             ProcessingMode = "automatic",
+            ExternalReference = $"boleto-{solicitud.BoletoId}",
             TotalAmount = monto,
             Payer = new OrderPayerRequest { Email = solicitud.CorreoPagador },
             Transactions = new OrderTransactionRequest

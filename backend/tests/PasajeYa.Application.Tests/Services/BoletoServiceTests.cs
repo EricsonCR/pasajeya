@@ -295,7 +295,7 @@ public class BoletoServiceTests
     }
 
     [Fact]
-    public async Task PagarAsync_DatosValidos_CobraElPrecioDelViajeConLaClaveDelFront()
+    public async Task PagarAsync_DatosValidos_CobraElPrecioDelViajeConElBoletoYLaClaveDelFront()
     {
         // Arrange
         _boletoRepository.ObtenerPorIdAsync(120).Returns(BoletoReservado());
@@ -306,7 +306,7 @@ public class BoletoServiceTests
 
         // Assert
         await _pasarelaPago.Received(1).CobrarAsync(Arg.Is<SolicitudCobro>(s =>
-            s.Monto == 69.90m && s.Token == "tok_123" && s.ClaveIdempotencia == "clave-1"));
+            s.BoletoId == 120 && s.Monto == 69.90m && s.Token == "tok_123" && s.ClaveIdempotencia == "clave-1"));
     }
 
     [Fact]
