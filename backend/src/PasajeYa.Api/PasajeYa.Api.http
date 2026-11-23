@@ -48,7 +48,7 @@ Accept: application/json
 
 # ===== HU-02: Ver asientos de un viaje y elegir uno =====
 # Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
-@viajeId = 4
+@viajeId = 185
 
 ### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
 GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
@@ -159,7 +159,7 @@ Content-Type: application/json
 
 # ===== HU-04: Pagar con tarjeta =====
 # Usa el "id" que devuelve el Criterio 1 de HU-03 (reserva válida).
-@boletoId = 788
+@boletoId = 1519
 
 ### Criterio 1: resumen de la reserva → 200 con viaje, asiento, precio y reservadoHasta
 GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}
@@ -169,4 +169,50 @@ Accept: application/json
 ### Criterio 3: boleto que no existe → 404 con ProblemDetails
 GET {{ PasajeYa.Api_HostAddress }}/api/boletos/99999
 Accept: application/json
+###
+
+# Criterio 2: pagar con tarjeta. Antes de ejecutarlo:
+# 1) Reserva un asiento (Criterio 1 de HU-03) y pon su "id" en @boletoId.
+# 2) Genera un token con el playground (titular APRO) y pégalo en @tokenTarjeta. Vence en minutos.
+# 3) @correoComprador = correo de tu usuario de prueba COMPRADOR de Mercado Pago.
+@tokenTarjeta = PEGA_AQUI_EL_TOKEN
+@correoComprador = COMPRADOR_DE_PRUEBA@testuser.com
+
+### Criterio 2: pago aprobado → 200 con estado "Pagado", numeroOperacion, fechaPago y monto
+POST {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}/pago
+Content-Type: application/json
+
+{
+  "token": "{{tokenTarjeta}}",
+  "medioPago": "master",
+  "cuotas": 1,
+  "correoPagador": "{{correoComprador}}",
+  "claveIdempotencia": "{{$guid}}"
+}
+###
+
+### Datos inválidos → 400 con errores en token y cuotas
+POST {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}/pago
+Content-Type: application/json
+
+{
+  "token": "",
+  "medioPago": "master",
+  "cuotas": 0,
+  "correoPagador": "{{correoComprador}}",
+  "claveIdempotencia": "{{$guid}}"
+}
+###
+
+### Criterio 3: pagar un boleto que no existe → 404
+POST {{ PasajeYa.Api_HostAddress }}/api/boletos/99999/pago
+Content-Type: application/json
+
+{
+  "token": "{{tokenTarjeta}}",
+  "medioPago": "master",
+  "cuotas": 1,
+  "correoPagador": "{{correoComprador}}",
+  "claveIdempotencia": "{{$guid}}"
+}
 ###
