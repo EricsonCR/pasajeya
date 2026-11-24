@@ -17,3 +17,33 @@
     margin: 0.25rem 0;
   }
 }
+
+// 3. Botón "Pagar con tarjeta": separado de la tarjeta de resumen
+.pantalla > button {
+  margin-top: 1rem;
+}
+
+// 4. Fondo del modal: capa oscura fija que cubre toda la pantalla y centra la caja
+.fondo-modal {
+  position: fixed;
+  inset: 0; // top, right, bottom y left en 0: ocupa toda la ventana
+  background-color: rgb(0 0 0 / 50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; // por encima del resto de la página
+}
+
+// 5. Caja del modal: blanca, con scroll propio si el formulario no entra en la ventana
+.modal {
+  background-color: #fff;
+  border-radius: var(--radio);
+  padding: 1.5rem;
+  width: min(500px, 90vw); // 500px, o el 90% del ancho en un celular
+  max-height: 90vh;
+  overflow-y: auto;
+
+  h2 {
+    margin-top: 0;
+  }
+}
