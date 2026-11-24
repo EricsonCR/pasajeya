@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BoletoService } from '../../services/boleto.service';
 import { DetalleBoleto } from '../../models/detalle-boleto';
@@ -16,7 +16,7 @@ declare const MercadoPago: any;
   styleUrl: './pagar-reserva.scss',
   templateUrl: './pagar-reserva.html',
 })
-export class PagarReserva implements OnInit {
+export class PagarReserva implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private boletoService = inject(BoletoService);
   protected detalle = signal<DetalleBoleto | null>(null);
@@ -72,5 +72,9 @@ export class PagarReserva implements OnInit {
     const pago = await firstValueFrom(this.boletoService.pagar(this.detalle()!.id, request));
     this.pago.set(pago);
     this.cerrarModal();
+  }
+
+  ngOnDestroy(): void {
+    this.brick?.unmount();
   }
 }
