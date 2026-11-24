@@ -14,7 +14,11 @@
       <p><strong>Precio:</strong> {{ d.precio | currency: 'PEN' : 'S/ ' }}</p>
       <p><strong>Paga antes de:</strong> {{ d.reservadoHasta | date: 'dd/MM/yyyy HH:mm' }}</p>
     </section>
-    <button (click)="abrirModal()">Pagar con tarjeta</button>
+    @if (pago(); as p) {
+      <p class="exito"><strong>Pago aprobado.</strong> N.º de operación: {{ p.numeroOperacion }}</p>
+    } @else {
+      <button (click)="abrirModal()">Pagar con tarjeta</button>
+    }
   </div>
 }
 

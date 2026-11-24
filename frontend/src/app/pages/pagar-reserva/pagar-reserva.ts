@@ -6,6 +6,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { PagarBoletoRequest } from '../../models/pagar-boleto-request';
 import { firstValueFrom } from 'rxjs';
+import { Pago } from '../../models/pago';
 
 declare const MercadoPago: any;
 
@@ -23,6 +24,7 @@ export class PagarReserva implements OnInit {
   protected modalAbierto = signal<boolean>(false);
   private brick: any;
   private claveIdempotencia = '';
+  protected pago = signal<Pago | null>(null);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -68,7 +70,7 @@ export class PagarReserva implements OnInit {
       claveIdempotencia: this.claveIdempotencia,
     };
     const pago = await firstValueFrom(this.boletoService.pagar(this.detalle()!.id, request));
-    console.log(pago);
+    this.pago.set(pago);
     this.cerrarModal();
   }
 }

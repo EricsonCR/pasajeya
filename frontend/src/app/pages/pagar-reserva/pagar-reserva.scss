@@ -47,3 +47,12 @@
     margin-top: 0;
   }
 }
+
+// 6. Mensaje "Pago aprobado": mismo formato que .aviso pero en verde
+.exito {
+  margin-top: 1rem;
+  background-color: #e8f5e9; // verde muy claro
+  border-left: 4px solid #2e7d32;
+  padding: 0.5rem 0.75rem;
+  max-width: 400px;
+}
