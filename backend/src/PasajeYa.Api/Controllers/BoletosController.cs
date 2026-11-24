@@ -21,4 +21,18 @@ public class BoletosController : ControllerBase
         var boleto = await _boletoService.ReservarAsync(request);
         return StatusCode(StatusCodes.Status201Created, boleto);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<DetalleBoletoDto>> ObtenerPorId(int id)
+    {
+        var detalleBoleto = await _boletoService.ObtenerAsync(id);
+        return Ok(detalleBoleto);
+    }
+
+    [HttpPost("{id:int}/pago")]
+    public async Task<ActionResult<PagoDto>> Pagar(int id, [FromBody] PagarBoletoRequest request)
+    {
+        var pago = await _boletoService.PagarAsync(id, request);
+        return Ok(pago);
+    }
 }

@@ -9,7 +9,7 @@ Capas del backend, organización del frontend y estructura del repositorio en el
 |---|---|
 | Plataforma | .NET 10 (LTS), solución `.slnx` y API con controllers: soporte largo y estilo común en empresas. |
 | BaseDatos | SQL Server 2022 local (Docker más adelante): motor habitual con .NET. |
-| Secretos | Cadena de conexión en User Secrets (`ConnectionStrings:PasajeYa`): no se suben credenciales. |
+| Secretos | User Secrets para la cadena de conexión (`ConnectionStrings:PasajeYa`) y el Access Token de Mercado Pago (`MercadoPago:AccessToken`): no se suben credenciales. La Public Key va en el `environment` del front porque es pública. |
 | Swagger | Swagger UI para probar los endpoints desde el navegador. |
 | Idioma | Dominio en español (`Viaje`), términos técnicos en inglés (`Controller`, `Dto`). |
 | Repositorios | Interfaz en Application e implementación en Infrastructure: Application no depende de EF Core. |
@@ -18,6 +18,9 @@ Capas del backend, organización del frontend y estructura del repositorio en el
 | Zona | Hora local de Perú (`DateTime`), sin UTC: un solo país. |
 | Concurrencia | Índice único filtrado en Boleto; `DbUpdateException` → 409: la base de datos evita la doble reserva. |
 | Vencimiento | La reserva vence al consultar (`ReservadoHasta > ahora`), sin procesos en segundo plano. |
+| Pasarela | Mercado Pago en modo de pruebas con el formulario de tarjeta (Card Payment Brick) dentro de un modal propio: el front obtiene un token de la tarjeta y el backend cobra con el SDK oficial de .NET. Los datos de la tarjeta nunca pasan por la API. |
+| PasarelaPago | Interfaz `IPasarelaPago` en Application e implementación con Mercado Pago en Infrastructure: las pruebas usan un mock y se puede cambiar de pasarela sin tocar Application. |
+| Idempotencia | `claveIdempotencia` nueva en cada intento (al abrir el formulario), enviada a Mercado Pago como header `X-Idempotency-Key`: si la misma petición se repite no hay doble cobro, y después de un rechazo se puede reintentar. |
 | CORS | Orígenes en `appsettings` (`Cors:OrigenesPermitidos`): se cambian sin tocar código. |
 | Frontend | Angular 22 + SCSS, sin SSR, Reactive Forms y signals; siempre se importa el `environment` base. |
 

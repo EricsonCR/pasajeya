@@ -12,6 +12,7 @@ public class PasajeYaDbContext : DbContext
     public DbSet<Ruta> Rutas { get; set; }
     public DbSet<Viaje> Viajes { get; set; }
     public DbSet<Boleto> Boletos { get; set; }
+    public DbSet<Pago> Pagos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

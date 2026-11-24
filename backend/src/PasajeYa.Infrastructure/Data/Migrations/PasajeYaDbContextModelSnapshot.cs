@@ -214,6 +214,43 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("PasajeYa.Domain.Entities.Pago", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BoletoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("NumeroOperacion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoletoId")
+                        .IsUnique()
+                        .HasFilter("[Estado] = ('Aprobado')");
+
+                    b.ToTable("Pagos");
+                });
+
             modelBuilder.Entity("PasajeYa.Domain.Entities.Ruta", b =>
                 {
                     b.Property<int>("Id")
@@ -377,6 +414,17 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                     b.Navigation("Viaje");
                 });
 
+            modelBuilder.Entity("PasajeYa.Domain.Entities.Pago", b =>
+                {
+                    b.HasOne("PasajeYa.Domain.Entities.Boleto", "Boleto")
+                        .WithMany("Pagos")
+                        .HasForeignKey("BoletoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Boleto");
+                });
+
             modelBuilder.Entity("PasajeYa.Domain.Entities.Ruta", b =>
                 {
                     b.HasOne("PasajeYa.Domain.Entities.Ciudad", "Destino")
@@ -413,6 +461,11 @@ namespace PasajeYa.Infrastructure.Data.Migrations
                     b.Navigation("Bus");
 
                     b.Navigation("Ruta");
+                });
+
+            modelBuilder.Entity("PasajeYa.Domain.Entities.Boleto", b =>
+                {
+                    b.Navigation("Pagos");
                 });
 
             modelBuilder.Entity("PasajeYa.Domain.Entities.Viaje", b =>

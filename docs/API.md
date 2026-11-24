@@ -117,3 +117,71 @@ Fechas en hora local de Perú, sin zona horaria (`2026-10-05T06:00:00`).
 ```json
 { "status": 409, "detail": "El número asiento 5 ya está ocupado" }
 ```
+
+## Ver reserva
+
+**URL:** `GET /api/boletos/{id}`
+
+**Response 200:** datos del boleto para la pantalla de pago.
+```json
+{
+  "id": 120,
+  "estado": "Reservado",
+  "origen": "Lima",
+  "destino": "Arequipa",
+  "salida": "2026-10-27T14:00:00",
+  "numeroAsiento": 5,
+  "precio": 69.90,
+  "nombres": "Ana",
+  "apellidos": "Pérez Soto",
+  "dni": "12345678",
+  "reservadoHasta": "2026-10-27T10:15:00"
+}
+```
+
+**Response 404:** el boleto no existe.
+```json
+{ "status": 404, "detail": "El boleto 99999 no existe" }
+```
+
+## Pagar reserva
+
+**URL:** `POST /api/boletos/{id}/pago`
+
+**Request:** `token`, `medioPago` y `cuotas` los entrega el formulario de tarjeta de Mercado Pago. El monto no viaja: sale del precio del viaje. `claveIdempotencia` se genera en el front cada vez que se abre el formulario; si se repite, no se cobra dos veces.
+```json
+{
+  "token": "ff8080814c11e237014c1ff593b57b4d",
+  "medioPago": "master",
+  "cuotas": 1,
+  "correoPagador": "ana@mail.com",
+  "claveIdempotencia": "7f3c2a9e-1b4d-4e8a-9c21-5d6f7a8b9c0d"
+}
+```
+
+**Response 200:** pago aprobado, el boleto pasa a `Pagado`.
+```json
+{
+  "id": 120,
+  "estado": "Pagado",
+  "numeroOperacion": "1234567890",
+  "fechaPago": "2026-10-27T10:05:00",
+  "monto": 69.90
+}
+```
+
+**Response 400:** datos inválidos (token, medio de pago, correo o clave vacíos, o cuotas menores a 1).
+```json
+{
+  "title": "One or more validation errors occurred.",
+  "status": 400,
+  "errors": {
+    "token": ["El token es obligatorio."]
+  }
+}
+```
+
+**Response 404:** el boleto no existe.
+```json
+{ "status": 404, "detail": "El boleto 99999 no existe" }
+```

@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+
+# Consola de pruebas local (backend/playground), no se versiona
+playground/

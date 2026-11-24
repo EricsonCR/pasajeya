@@ -63,6 +63,21 @@ Base de datos SQL Server, creada con migraciones de EF Core. Configuración de c
 
 **Índice único filtrado:** (ViajeId, NumeroAsiento) solo para Estado `Reservado` o `Pagado`. Evita dos boletos activos en el mismo asiento.
 
+## Pago
+
+Cada intento de pago de un boleto. Un boleto puede tener varios pagos rechazados, pero uno solo aprobado.
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| Id | int | PK |
+| BoletoId | int | FK → Boleto |
+| Estado | nvarchar(20) | Aprobado o Rechazado |
+| NumeroOperacion | nvarchar(50) | Id del pago en Mercado Pago (también existe si se rechaza) |
+| Monto | decimal(10,2) | En soles. Copia de `Viaje.Precio` al pagar |
+| Fecha | datetime2 | Hora local de Perú |
+
+**Índice único filtrado:** (BoletoId) solo para Estado `Aprobado`. Evita cobrar dos veces el mismo boleto.
+
 ## Datos de prueba
 
 **Catálogo** (en las migraciones): 8 ciudades, 15 rutas y 6 buses (Económico, Ejecutivo y Vip).
@@ -82,3 +97,15 @@ Base de datos SQL Server, creada con migraciones de EF Core. Configuración de c
 Mañana, la misma ruta no tiene boletos.
 
 **Resto de rutas:** simulan ventas. En cada arranque, cada viaje con salida posterior a la hora actual (los de hoy que aún no salen y los de mañana) recibe 4 boletos `Pagado` en asientos libres, hasta llenarse. Los viajes que ya salieron no cambian.
+
+Los boletos `Pagado` del seed no tienen registro en `Pago`.
+
+## Diseño objetivo: Venta
+
+Hoy un boleto = una compra. Cuando se puedan comprar varios asientos a la vez, el modelo cambia a:
+
+- **Venta** (cabecera): Correo, Celular, Estado, ReservadoHasta, Total, Fecha.
+- **Venta 1..N Boleto**: cada boleto guarda su asiento y los datos de su pasajero.
+- **Venta 1..N Pago**: el pago se hace por la venta, no por cada boleto.
+
+Ese cambio va a requerir una migración que mueva los datos que ya existan.

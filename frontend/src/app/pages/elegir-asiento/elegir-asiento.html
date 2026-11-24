@@ -35,6 +35,7 @@
         <div class="confirmacion">
           <p>Número asiento: {{ b.numeroAsiento }}</p>
           <p>Hora límite: {{ b.reservadoHasta | date: 'HH:mm' }}</p>
+          <a class="boton" [routerLink]="['/boletos', b.id, 'pago']">Ir a pagar</a>
         </div>
       }
     </section>

@@ -1,0 +1,33 @@
+@if (error(); as msg) {
+  <p class="error aviso">{{ msg }}</p>
+}
+
+@if (detalle(); as d) {
+  <h1>Pagar reserva</h1>
+  <div class="pantalla">
+    <section class="resumen">
+      <p><strong>Ruta:</strong> {{ d.origen }} → {{ d.destino }}</p>
+      <p><strong>Salida:</strong> {{ d.salida | date: 'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Asiento:</strong> {{ d.numeroAsiento }}</p>
+      <p><strong>Pasajero:</strong> {{ d.nombres }} {{ d.apellidos }}</p>
+      <p><strong>DNI:</strong> {{ d.dni }}</p>
+      <p><strong>Precio:</strong> {{ d.precio | currency: 'PEN' : 'S/ ' }}</p>
+      <p><strong>Paga antes de:</strong> {{ d.reservadoHasta | date: 'dd/MM/yyyy HH:mm' }}</p>
+    </section>
+    @if (pago(); as p) {
+      <p class="exito"><strong>Pago aprobado.</strong> N.º de operación: {{ p.numeroOperacion }}</p>
+    } @else {
+      <button (click)="abrirModal()">Pagar con tarjeta</button>
+    }
+  </div>
+}
+
+@if (modalAbierto()) {
+  <div class="fondo-modal">
+    <div class="modal">
+      <h2>Pagar con tarjeta</h2>
+      <div id="cardPaymentBrick_container"></div>
+      <button (click)="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+}
