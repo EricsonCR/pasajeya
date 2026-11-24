@@ -4,6 +4,8 @@ import { BoletoService } from '../../services/boleto.service';
 import { DetalleBoleto } from '../../models/detalle-boleto';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { PagarBoletoRequest } from '../../models/pagar-boleto-request';
+import { firstValueFrom } from 'rxjs';
 
 declare const MercadoPago: any;
 
@@ -20,6 +22,7 @@ export class PagarReserva implements OnInit {
   protected error = signal<string | null>(null);
   protected modalAbierto = signal<boolean>(false);
   private brick: any;
+  private claveIdempotencia = '';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -35,6 +38,7 @@ export class PagarReserva implements OnInit {
 
   abrirModal() {
     this.modalAbierto.set(true);
+    this.claveIdempotencia = crypto.randomUUID();
     setTimeout(() => this.crearBrick());
   }
 
@@ -49,9 +53,22 @@ export class PagarReserva implements OnInit {
       initialization: { amount: this.detalle()!.precio },
       callbacks: {
         onReady: () => {},
-        onSubmit: (formData: any) => console.log(formData),
+        onSubmit: (formData: any) => this.enviarPago(formData),
         onError: (error: any) => console.error(error),
       },
     });
+  }
+
+  private async enviarPago(formData: any): Promise<void> {
+    const request: PagarBoletoRequest = {
+      token: formData.token,
+      medioPago: formData.payment_method_id,
+      cuotas: formData.installments,
+      correoPagador: formData.payer.email,
+      claveIdempotencia: this.claveIdempotencia,
+    };
+    const pago = await firstValueFrom(this.boletoService.pagar(this.detalle()!.id, request));
+    console.log(pago);
+    this.cerrarModal();
   }
 }
