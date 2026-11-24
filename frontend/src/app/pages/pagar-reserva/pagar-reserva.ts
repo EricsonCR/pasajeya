@@ -15,6 +15,7 @@ export class PagarReserva implements OnInit {
   private boletoService = inject(BoletoService);
   protected detalle = signal<DetalleBoleto | null>(null);
   protected error = signal<string | null>(null);
+  protected modalAbierto = signal<boolean>(false);
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -26,5 +27,13 @@ export class PagarReserva implements OnInit {
         this.error.set('La reserva no existe');
       },
     });
+  }
+
+  abrirModal() {
+    this.modalAbierto.set(true);
+  }
+
+  cerrarModal() {
+    this.modalAbierto.set(false);
   }
 }

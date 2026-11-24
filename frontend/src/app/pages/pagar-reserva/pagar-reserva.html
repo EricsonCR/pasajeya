@@ -14,5 +14,16 @@
       <p><strong>Precio:</strong> {{ d.precio | currency: 'PEN' : 'S/ ' }}</p>
       <p><strong>Paga antes de:</strong> {{ d.reservadoHasta | date: 'dd/MM/yyyy HH:mm' }}</p>
     </section>
+    <button (click)="abrirModal()">Pagar con tarjeta</button>
+  </div>
+}
+
+@if (modalAbierto()) {
+  <div class="fondo-modal">
+    <div class="modal">
+      <h2>Pagar con tarjeta</h2>
+      <div id="cardPaymentBrick_container"></div>
+      <button (click)="cerrarModal()">Cancelar</button>
+    </div>
   </div>
 }
