@@ -122,7 +122,7 @@ Fechas en hora local de Perú, sin zona horaria (`2026-10-05T06:00:00`).
 
 **URL:** `GET /api/boletos/{id}`
 
-**Response 200:** datos del boleto para la pantalla de pago.
+**Response 200:** datos del boleto para la pantalla de pago y el comprobante. `numeroOperacion` y `fechaPago` vienen del pago aprobado; son `null` si no hay pago aprobado.
 ```json
 {
   "id": 120,
@@ -135,7 +135,9 @@ Fechas en hora local de Perú, sin zona horaria (`2026-10-05T06:00:00`).
   "nombres": "Ana",
   "apellidos": "Pérez Soto",
   "dni": "12345678",
-  "reservadoHasta": "2026-10-27T10:15:00"
+  "reservadoHasta": "2026-10-27T10:15:00",
+  "numeroOperacion": null,
+  "fechaPago": null
 }
 ```
 

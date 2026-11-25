@@ -22,6 +22,7 @@ public class BoletoRepository : IBoletoRepository
                .AsNoTracking()
                .Include(b => b.Viaje).ThenInclude(v => v!.Ruta).ThenInclude(r => r!.Origen)
                .Include(b => b.Viaje).ThenInclude(v => v!.Ruta).ThenInclude(r => r!.Destino)
+               .Include(b => b.Pagos)
                .FirstOrDefaultAsync(x => x.Id == boletoId);
 
         return boleto;

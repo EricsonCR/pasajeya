@@ -29,6 +29,8 @@ public class BoletoService : IBoletoService
         if (boleto is null)
             throw new NoEncontradoException($"El boleto {boletoId} no existe");
 
+        var pagoAprobado = boleto.Pagos.FirstOrDefault(x => x.Estado == EstadoPago.Aprobado);
+
         return new DetalleBoletoDto(
             boleto.Id,
             boleto.Estado,
@@ -40,7 +42,9 @@ public class BoletoService : IBoletoService
             boleto.Nombres,
             boleto.Apellidos,
             boleto.Dni,
-            boleto.ReservadoHasta
+            boleto.ReservadoHasta,
+            pagoAprobado?.NumeroOperacion,
+            pagoAprobado?.Fecha
         );
     }
 

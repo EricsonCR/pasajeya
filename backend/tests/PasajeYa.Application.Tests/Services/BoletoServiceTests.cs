@@ -239,6 +239,37 @@ public class BoletoServiceTests
         Assert.Equal(69.90m, detalle.Precio);
         Assert.Equal("46348500", detalle.Dni);
         Assert.Equal(Ahora.AddMinutes(15), detalle.ReservadoHasta);
+        Assert.Null(detalle.NumeroOperacion);
+        Assert.Null(detalle.FechaPago);
+    }
+
+    // ===== ObtenerAsync con pagos (HU-05) =====
+
+    [Fact]
+    public async Task ObtenerAsync_ConPagoRechazadoYAprobado_DevuelveDatosDelAprobado()
+    {
+        // Arrange
+        var boleto = BoletoReservado();
+        boleto.Estado = EstadoBoleto.Pagado;
+        boleto.Viaje!.Ruta = new Ruta
+        {
+            Origen = new Ciudad { Nombre = "Lima" },
+            Destino = new Ciudad { Nombre = "Arequipa" }
+        };
+        boleto.Pagos =
+        [
+            new Pago { Estado = EstadoPago.Rechazado, NumeroOperacion = "PAY01-RECHAZADO", Fecha = Ahora.AddMinutes(-5) },
+            new Pago { Estado = EstadoPago.Aprobado, NumeroOperacion = "PAY01-APROBADO", Fecha = Ahora }
+        ];
+        _boletoRepository.ObtenerPorIdAsync(120).Returns(boleto);
+
+        // Act
+        var detalle = await _boletoService.ObtenerAsync(120);
+
+        // Assert
+        Assert.Equal(EstadoBoleto.Pagado, detalle.Estado);
+        Assert.Equal("PAY01-APROBADO", detalle.NumeroOperacion);
+        Assert.Equal(Ahora, detalle.FechaPago);
     }
 
     // ===== PagarAsync (HU-04) =====

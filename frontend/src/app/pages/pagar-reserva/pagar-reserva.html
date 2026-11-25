@@ -16,6 +16,7 @@
     </section>
     @if (pago(); as p) {
       <p class="exito"><strong>Pago aprobado.</strong> N.º de operación: {{ p.numeroOperacion }}</p>
+      <a class="boton" [routerLink]="['/boletos', d.id, 'comprobante']">Ver comprobante</a>
     } @else {
       <button (click)="abrirModal()">Pagar con tarjeta</button>
     }

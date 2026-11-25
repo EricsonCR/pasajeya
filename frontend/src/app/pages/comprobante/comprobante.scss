@@ -1,0 +1,197 @@
+// 1. Pantalla centrada y angosta, como un boleto en el celular
+:host {
+  display: block;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+// 2. Tarjeta del boleto: esquinas redondeadas y sombra.
+// overflow: hidden recorta la cabecera azul y las muescas del corte a las esquinas de la tarjeta
+.boleto {
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  overflow: hidden;
+}
+
+// 3. Cabecera azul con la etiqueta blanca arriba
+.cabecera {
+  background-color: var(--color-primario);
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 1.5rem 2rem;
+}
+
+.etiqueta {
+  display: inline-block;
+  background-color: #fff;
+  color: var(--color-primario);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radio);
+}
+
+// 4. Ruta: grilla de 2 columnas. Fila 1: origen | destino (cada uno con media tarjeta).
+// Fila 2: el bus con las líneas punteadas, a todo el ancho.
+// Así una ciudad larga ("Puerto Maldonado") baja de línea entre palabras sin salirse
+.ruta {
+  display: grid;
+  // minmax(0, 1fr): mitades iguales aunque una palabra sea más ancha (sin esto, la empuja fuera)
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end; // si una ciudad ocupa 2 líneas, la otra queda abajo, alineada
+  gap: 0.75rem 1rem;
+  margin-top: 1.5rem;
+}
+
+.ciudad {
+  // clamp(mínimo, ideal, máximo): en el celular la letra baja hasta 1rem según el ancho de pantalla
+  font-size: clamp(1rem, 4.5vw, 1.35rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: left;
+  overflow-wrap: break-word; // solo parte una palabra si no entra ni sola en su línea
+
+  // el destino se alinea a la derecha, pegado a su borde
+  &:last-child {
+    text-align: right;
+  }
+}
+
+.trayecto {
+  grid-column: 1 / -1; // de la primera a la última columna: todo el ancho
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  // ::before y ::after son las líneas punteadas a cada lado del bus
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-top: 2px dashed rgb(255 255 255 / 60%);
+  }
+}
+
+// Ícono del bus (SVG): carrocería blanca; ventanas y ruedas del azul de la cabecera
+.bus {
+  width: 56px;
+  height: 28px;
+  flex-shrink: 0; // que no se achique aunque las ciudades sean largas
+}
+
+.carroceria {
+  fill: #fff;
+}
+
+.ventana,
+.rueda {
+  fill: var(--color-primario);
+}
+
+.rueda {
+  stroke: #fff; // borde blanco: la rueda se ve separada de la carrocería
+  stroke-width: 2;
+}
+
+// 5. Franja destacada: fecha, hora y asiento grandes, lo primero que busca el pasajero
+.destacado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: #e8eef7; // azul muy claro, misma familia que la cabecera
+  text-align: center;
+  padding: 1.25rem 1rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+  }
+
+  strong {
+    font-size: 1.4rem;
+    color: var(--color-primario);
+  }
+}
+
+// 6. Datos y talón: grilla de 2 columnas, etiqueta chica arriba y valor en negrita abajo
+.datos,
+.talon {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.75rem 1rem; // filas más separadas que columnas: el boleto se ve más vertical
+  padding: 1.75rem 1.5rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  // la columna derecha se alinea a la derecha, como en el boarding pass
+  div:nth-child(even) {
+    text-align: right;
+  }
+
+  span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280; // gris medio
+  }
+
+  strong {
+    font-size: 1rem;
+    overflow-wrap: anywhere; // el n.º de operación es largo: baja de línea en vez de salirse
+  }
+}
+
+.talon strong {
+  color: var(--color-primario);
+}
+
+// 7. Línea de corte punteada con una muesca (medio círculo) a cada lado
+.corte {
+  position: relative;
+  border-top: 2px dashed var(--color-deshabilitado); // gris más oscuro: el corte se nota
+  margin: 0 1.25rem;
+
+  // cada muesca es un círculo del color del fondo de la página, centrado en el borde
+  // de la tarjeta: overflow: hidden de .boleto corta la mitad de afuera
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: -17px; // centra el círculo de 32px sobre la línea de 2px
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-fondo);
+    box-shadow: inset 0 2px 5px rgb(0 0 0 / 15%); // sombra interior: parece un hueco real
+  }
+
+  &::before {
+    left: calc(-1.25rem - 16px);
+  }
+
+  &::after {
+    right: calc(-1.25rem - 16px);
+  }
+}
+
+// 8. Aviso de boleto no pagado: amarillo (advertencia), no rojo como los errores
+.pendiente {
+  background-color: #fff8e1;
+  border-left: 4px solid #f9a825;
+  padding: 0.5rem 0.75rem;
+}

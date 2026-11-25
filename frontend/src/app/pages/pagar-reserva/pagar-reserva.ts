@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BoletoService } from '../../services/boleto.service';
 import { DetalleBoleto } from '../../models/detalle-boleto';
 import { CurrencyPipe, DatePipe } from '@angular/common';
@@ -11,7 +11,7 @@ import { Pago } from '../../models/pago';
 declare const MercadoPago: any;
 
 @Component({
-  imports: [DatePipe, CurrencyPipe],
+  imports: [DatePipe, CurrencyPipe, RouterLink],
   selector: 'app-pagar-reserva',
   styleUrl: './pagar-reserva.scss',
   templateUrl: './pagar-reserva.html',

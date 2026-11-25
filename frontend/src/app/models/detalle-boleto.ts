@@ -10,4 +10,6 @@ export interface DetalleBoleto {
   apellidos: string;
   dni: string;
   reservadoHasta: string;
+  numeroOperacion: string | null;
+  fechaPago: string | null;
 }
