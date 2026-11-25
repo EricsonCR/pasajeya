@@ -48,7 +48,7 @@ Accept: application/json
 
 # ===== HU-02: Ver asientos de un viaje y elegir uno =====
 # Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
-@viajeId = 185
+@viajeId = 274
 
 ### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
 GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
@@ -215,4 +215,19 @@ Content-Type: application/json
   "correoPagador": "{{correoComprador}}",
   "claveIdempotencia": "{{$guid}}"
 }
+###
+# ===== HU-05: Ver comprobante =====
+# @boletoPagadoId: un boleto pagado con Mercado Pago (Criterio 2 de HU-04).
+# @boletoReservadoId: un boleto solo reservado (Criterio 1 de HU-03).
+@boletoPagadoId = 1519
+@boletoReservadoId = 2286
+
+### Criterio 1: boleto pagado → 200 con estado "Pagado", numeroOperacion y fechaPago
+GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoPagadoId}}
+Accept: application/json
+###
+
+### Criterio 2: boleto no pagado → 200 con numeroOperacion y fechaPago en null
+GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoReservadoId}}
+Accept: application/json
 ###
