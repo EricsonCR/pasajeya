@@ -1,1 +1,11 @@
-<p>comprobante works!</p>
+@if (error(); as msg) {
+  <p class="error aviso">{{ msg }}</p>
+}
+
+@if (detalleBoleto()) {
+  @if (detalleBoleto()?.estado != 'Pagado') {
+    <p>Este boleto aún no está pagado</p>
+  } @else if (detalleBoleto()?.estado == 'Pagado') {
+    <p>Comprobante</p>
+  }
+}
