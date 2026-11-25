@@ -13,5 +13,7 @@ public record DetalleBoletoDto(
     string Nombres,
     string Apellidos,
     string Dni,
-    DateTime? ReservadoHasta
+    DateTime? ReservadoHasta,
+    string? NumeroOperacion,
+    DateTime? FechaPago
 );
