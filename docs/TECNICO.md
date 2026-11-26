@@ -50,7 +50,7 @@ Capas del backend, organización del frontend y estructura del repositorio en el
 - Unitarias siempre: Domain y Application (xUnit + NSubstitute), un proyecto de pruebas por capa.
 - Nombres `Metodo_Escenario_Resultado` y patrón AAA (Arrange, Act, Assert).
 - Integración solo cuando se evalúe necesario (ej. concurrencia en HU-03).
-- Pruebas manuales: archivo `.http` con un request por criterio de aceptación.
+- Pruebas manuales: archivo `.http` con un request por endpoint (caso exitoso); los casos de error se cubren con pruebas unitarias.
 - Frontend sin pruebas unitarias por ahora.
 
 ## Definición de listo
