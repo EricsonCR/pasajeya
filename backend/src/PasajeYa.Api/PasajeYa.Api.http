@@ -1,233 +1,58 @@
 @PasajeYa.Api_HostAddress = http://localhost:5178
 
-### Criterio 1: Listar ciudades
-GET {{ PasajeYa.Api_HostAddress }}/api/ciudades
+# Un request por endpoint (caso exitoso), en el orden del flujo de compra.
+# Los casos de error se cubren con pruebas unitarias (docs/TECNICO.md → Pruebas).
+#
+# Antes de ejecutar, actualiza las variables siguiendo el flujo:
+# @viajeId    → "id" de un viaje que aún no sale (request 2)
+# @asiento    → un asiento libre del mapa (request 3)
+# @boletoId   → "id" que devuelve la reserva (request 4)
+# @token      → token de tarjeta del playground, titular APRO (vence en minutos)
+# @correo     → correo de tu usuario de prueba COMPRADOR de Mercado Pago
+@viajeId = 3
+@asiento = 10
+@boletoId = 1519
+@token = PEGA_AQUI_EL_TOKEN
+@correo = COMPRADOR_DE_PRUEBA@testuser.com
+
+### 1. Listar ciudades → 200
+GET {{ PasajeYa.Api_HostAddress}}/api/ciudades
 Accept: application/json
-###
 
-### Criterio 2: búsqueda con resultados, ordenados por salida
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 1 d}}
+### 2. Buscar viajes Lima → Arequipa para mañana → 200
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 1 d}}
 Accept: application/json
-###
 
-### Criterio 3: viaje agotado (asientosDisponibles = 0): Lima→Arequipa hoy 14:00; ver docs/DATOS.md
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD'}}
+### 3. Ver el mapa de asientos de un viaje → 200
+GET {{ PasajeYa.Api_HostAddress}}/api/viajes/{{viajeId}}/asientos
 Accept: application/json
-###
 
-### Criterio 4: Listar viajes de solo hoy
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 0 d}}
-Accept: application/json
-###
-
-### Criterio 5: Viaje sin resultado
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=7&fecha={{$localDatetime 'YYYY-MM-DD'}}
-Accept: application/json
-###
-
-### Criterio 6a: Buscar viajes de origen y destino iguales
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=1&fecha={{$localDatetime 'YYYY-MM-DD'}}
-Accept: application/json
-###
-
-### Criterio 6b: Buscar viajes con fecha pasada
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' -1 d}}
-Accept: application/json
-###
-
-### Criterio 6c: Buscar viajes con fecha mas de 30 dias
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=2&fecha={{$localDatetime 'YYYY-MM-DD' 31 d}}
-Accept: application/json
-###
-
-### Criterio 6d: Buscar viajes con ciudad que no existe
-GET {{ PasajeYa.Api_HostAddress}}/api/viajes?origen=1&destino=99&fecha={{$localDatetime 'YYYY-MM-DD'}}
-Accept: application/json
-###
-
-
-# ===== HU-02: Ver asientos de un viaje y elegir uno =====
-# Cambia el id por uno real: tómalo del "id" de una búsqueda de HU-01 (Criterio 2 o 3).
-@viajeId = 274
-
-### Criterio 2: mapa con todos los asientos (1…capacidad), libres y ocupados
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes/{{viajeId}}/asientos
-Accept: application/json
-###
-
-### Criterio 6: viaje que no existe → 404 con ProblemDetails
-GET {{ PasajeYa.Api_HostAddress }}/api/viajes/99999/asientos
-Accept: application/json
-###
-
-# ===== HU-03: Reservar un asiento =====
-# Usa el @viajeId de HU-02. Elige un asiento libre del mapa (Criterio 2 de HU-02).
-@asientoLibre = 10
-
-### Criterio 1: reserva válida → 201 con estado "Reservado" y reservadoHasta = ahora + 15 min
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
+### 4. Reservar un asiento → 201 con estado "Reservado"
+POST {{ PasajeYa.Api_HostAddress}}/api/boletos
 Content-Type: application/json
 
 {
   "viajeId": {{viajeId}},
-  "numeroAsiento": {{asientoLibre}},
-  "dni": "46348500",
-  "nombres": "Ericson",
-  "apellidos": "Cruz",
-  "correo": "ericson@mail.com",
-  "celular": "987654321"
-}
-###
-
-### Criterio 2a: DNI de 7 dígitos y sin correo → 400 con errores en dni y correo
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
-Content-Type: application/json
-
-{
-  "viajeId": {{viajeId}},
-  "numeroAsiento": {{asientoLibre}},
-  "dni": "4634850",
-  "nombres": "Ericson",
-  "apellidos": "Cruz",
-  "correo": ""
-}
-###
-
-### Criterio 2b: asiento fuera de rango → 400 en numeroAsiento
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
-Content-Type: application/json
-
-{
-  "viajeId": {{viajeId}},
-  "numeroAsiento": 99,
-  "dni": "46348500",
-  "nombres": "Ericson",
-  "apellidos": "Cruz",
-  "correo": "ericson@mail.com"
-}
-###
-
-### Criterio 3: mismo asiento del Criterio 1 (ejecutarlo después) → 409
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
-Content-Type: application/json
-
-{
-  "viajeId": {{viajeId}},
-  "numeroAsiento": {{asientoLibre}},
+  "numeroAsiento": {{asiento}},
   "dni": "12345678",
   "nombres": "Ana",
   "apellidos": "Pérez Soto",
-  "correo": "ana@mail.com"
+  "correo": "ana@mail.com",
+  "celular": "987654321"
 }
-###
 
-# Criterio 4: reserva vencida libera el asiento. Sin request propio: espera 15 min
-# después del Criterio 1 y repítelo → 201 (o revisa el mapa de HU-02: el asiento sale libre).
-# Cubierto también por pruebas unitarias (ViajeTests y BoletoServiceTests).
-
-### Criterio 5: viaje que no existe → 404
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
-Content-Type: application/json
-
-{
-  "viajeId": 99999,
-  "numeroAsiento": 1,
-  "dni": "46348500",
-  "nombres": "Ericson",
-  "apellidos": "Cruz",
-  "correo": "ericson@mail.com"
-}
-###
-
-# ===== Fix #13: no reservar en viajes que ya salieron =====
-# Usa un viaje con salida pasada: SELECT TOP 1 Id FROM Viajes WHERE Salida <= GETDATE()
-@viajeSalidoId = 316
-
-### Viaje ya salido → 400 con error en viajeId
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos
-Content-Type: application/json
-
-{
-  "viajeId": {{viajeSalidoId}},
-  "numeroAsiento": 1,
-  "dni": "46348500",
-  "nombres": "Ericson",
-  "apellidos": "Cruz",
-  "correo": "ericson@mail.com"
-}
-###
-
-# ===== HU-04: Pagar con tarjeta =====
-# Usa el "id" que devuelve el Criterio 1 de HU-03 (reserva válida).
-@boletoId = 1519
-
-### Criterio 1: resumen de la reserva → 200 con viaje, asiento, precio y reservadoHasta
-GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}
+### 5. Ver un boleto (reserva o comprobante) → 200
+GET {{ PasajeYa.Api_HostAddress}}/api/boletos/{{boletoId}}
 Accept: application/json
-###
 
-### Criterio 3: boleto que no existe → 404 con ProblemDetails
-GET {{ PasajeYa.Api_HostAddress }}/api/boletos/99999
-Accept: application/json
-###
-
-# Criterio 2: pagar con tarjeta. Antes de ejecutarlo:
-# 1) Reserva un asiento (Criterio 1 de HU-03) y pon su "id" en @boletoId.
-# 2) Genera un token con el playground (titular APRO) y pégalo en @tokenTarjeta. Vence en minutos.
-# 3) @correoComprador = correo de tu usuario de prueba COMPRADOR de Mercado Pago.
-@tokenTarjeta = PEGA_AQUI_EL_TOKEN
-@correoComprador = COMPRADOR_DE_PRUEBA@testuser.com
-
-### Criterio 2: pago aprobado → 200 con estado "Pagado", numeroOperacion, fechaPago y monto
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}/pago
+### 6. Pagar con tarjeta → 200 con estado "Pagado" y numeroOperacion
+POST {{ PasajeYa.Api_HostAddress}}/api/boletos/{{boletoId}}/pago
 Content-Type: application/json
 
 {
-  "token": "{{tokenTarjeta}}",
+  "token": "{{token}}",
   "medioPago": "master",
   "cuotas": 1,
-  "correoPagador": "{{correoComprador}}",
+  "correoPagador": "{{correo}}",
   "claveIdempotencia": "{{$guid}}"
 }
-###
-
-### Datos inválidos → 400 con errores en token y cuotas
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoId}}/pago
-Content-Type: application/json
-
-{
-  "token": "",
-  "medioPago": "master",
-  "cuotas": 0,
-  "correoPagador": "{{correoComprador}}",
-  "claveIdempotencia": "{{$guid}}"
-}
-###
-
-### Criterio 3: pagar un boleto que no existe → 404
-POST {{ PasajeYa.Api_HostAddress }}/api/boletos/99999/pago
-Content-Type: application/json
-
-{
-  "token": "{{tokenTarjeta}}",
-  "medioPago": "master",
-  "cuotas": 1,
-  "correoPagador": "{{correoComprador}}",
-  "claveIdempotencia": "{{$guid}}"
-}
-###
-# ===== HU-05: Ver comprobante =====
-# @boletoPagadoId: un boleto pagado con Mercado Pago (Criterio 2 de HU-04).
-# @boletoReservadoId: un boleto solo reservado (Criterio 1 de HU-03).
-@boletoPagadoId = 1519
-@boletoReservadoId = 2286
-
-### Criterio 1: boleto pagado → 200 con estado "Pagado", numeroOperacion y fechaPago
-GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoPagadoId}}
-Accept: application/json
-###
-
-### Criterio 2: boleto no pagado → 200 con numeroOperacion y fechaPago en null
-GET {{ PasajeYa.Api_HostAddress }}/api/boletos/{{boletoReservadoId}}
-Accept: application/json
-###
