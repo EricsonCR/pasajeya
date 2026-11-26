@@ -1,0 +1,60 @@
+// Encabezado: franja del color primario, fija arriba al hacer scroll
+.encabezado {
+  position: sticky;
+  top: 0;
+  z-index: 10; // queda encima del contenido que pasa por debajo
+  display: flex;
+  justify-content: space-between; // logo a la izquierda, menú a la derecha
+  align-items: center;
+  padding: 0.75rem 2rem;
+  background-color: var(--color-primario);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+// Logo: ícono de bus + nombre
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+
+  svg {
+    width: 2.5rem;
+  }
+
+  .carroceria {
+    fill: #fff;
+  }
+
+  .ventana {
+    fill: var(--color-primario);
+  }
+
+  .rueda {
+    fill: var(--color-texto);
+    stroke: #fff;
+    stroke-width: 2;
+  }
+}
+
+// Enlaces del menú: subrayado al pasar el mouse y en la pantalla actual
+nav a {
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid transparent; // reserva el espacio: el texto no salta
+
+  &:hover,
+  &.activo {
+    border-bottom-color: #fff;
+  }
+}
+
+// Contenido de cada pantalla: el margen que antes tenía el body
+main {
+  padding: 2rem;
+}

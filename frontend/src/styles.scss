@@ -17,7 +17,7 @@ body {
   font-family: system-ui, sans-serif;
   color: var(--color-texto);
   background-color: var(--color-fondo);
-  margin: 2rem;
+  margin: 0; // el encabezado ocupa todo el ancho; el margen del contenido está en <main> (app.scss)
 }
 
 h1 {
